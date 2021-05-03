@@ -2,6 +2,10 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
     {
+      roleId: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
       firstName: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -25,6 +29,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     {}
   );
+
+  // User.associate = (models) => {
+  //   User.belongsTo(models.Role, {
+  //     foreignKey: {
+  //       name: "roleId",
+  //       allowNull: false,
+  //     },
+  //     as: "role",
+  //   });
+  // };
 
   return User;
 };

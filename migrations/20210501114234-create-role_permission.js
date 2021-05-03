@@ -14,17 +14,17 @@ module.exports = {
       roleId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Role",
+          model: "Roles",
           key: "id",
-          as: "role",
+          as: "roles",
         },
       },
       permissionId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "Permission",
+          model: "Permissions",
           key: "id",
-          as: "permission",
+          as: "permissions",
         },
       },
       createdAt: {
