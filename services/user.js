@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const hash = require("../utils/hash");
-const { User } = require("../models");
+const { User, Pending_Registrations } = require("../models");
 const MailService = require("../MailService");
 
 const registerUser = async (
@@ -29,6 +29,31 @@ const registerUser = async (
   } catch (err) {
     console.log(err);
     throw Error("Error in registrating user.", err);
+  }
+};
+
+const registrationRequest = async (
+  firstName,
+  lastName,
+  email,
+  password,
+  phoneNumber
+) => {
+  try {
+    const hashed = await hash.hashPassword(password);
+    const request = {
+      firstName,
+      lastName,
+      email,
+      password: hashed,
+      phoneNumber,
+    };
+
+    const regRequest = await Pending_Registrations.create(request);
+    return regRequest;
+  } catch (err) {
+    console.log(err);
+    throw Error("Error in saving registration request.");
   }
 };
 
@@ -99,4 +124,5 @@ module.exports = {
   getUsers,
   getUserProfile,
   requestPasswordReset,
+  registrationRequest,
 };

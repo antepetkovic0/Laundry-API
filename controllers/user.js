@@ -25,6 +25,23 @@ const registerUser = async (req, res) => {
   }
 };
 
+const registrationRequest = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, phoneNumber } = req.body;
+
+    const user = await userService.registrationRequest(
+      firstName,
+      lastName,
+      email,
+      password,
+      phoneNumber
+    );
+    return res.json({ status: 200, data: user });
+  } catch (err) {
+    return res.json({ status: 400, message: err.message });
+  }
+};
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -65,4 +82,5 @@ module.exports = {
   getUsers,
   getUserProfile,
   requestResetPassword,
+  registrationRequest,
 };

@@ -36,7 +36,7 @@ class MailService {
   sendMail({ to, subject, template, context, attachments }) {
     return this.transporter.sendMail(
       {
-        to,
+        to: `<${to}>`,
         from: process.env.FROM_EMAIL || "ante.petkovic1994@gmail.com",
         subject,
         template,
