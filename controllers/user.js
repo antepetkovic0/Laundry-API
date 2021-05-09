@@ -40,12 +40,29 @@ const getUsers = async (req, res) => {
     const users = await userService.getUsers();
     return res.json({ status: 200, data: users });
   } catch (err) {
-    return res.json({ status: 200, message: err.message });
+    return res.json({ status: 400, message: err.message });
   }
+};
+
+const getUserProfile = async (req, res) => {
+  try {
+    const userEmail = req.decoded.email;
+    const user = await userService.getUserProfile(userEmail);
+    return res.json({ status: 200, data: user });
+  } catch (err) {
+    return res.json({ status: 400, message: err.message });
+  }
+};
+
+const requestResetPassword = async (req, res) => {
+  const passwordReset = await userService.requestPasswordReset(req.body.email);
+  return res.json(passwordReset);
 };
 
 module.exports = {
   registerUser,
   loginUser,
   getUsers,
+  getUserProfile,
+  requestResetPassword,
 };
