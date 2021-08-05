@@ -40,41 +40,6 @@ const deleteUserProfile = async (req, res) => {
   }
 };
 
-const registerUser = async (req, res) => {
-  try {
-    const {
-      roleId,
-      firstName,
-      lastName,
-      email,
-      password,
-      phoneNumber,
-    } = req.body;
-
-    const user = await userService.registerUser(
-      roleId,
-      firstName,
-      lastName,
-      email,
-      password,
-      phoneNumber
-    );
-    return res.json({ status: 200, data: user });
-  } catch (err) {
-    return res.json({ status: 400, message: err.message });
-  }
-};
-
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await userService.loginUser(email, password);
-    return res.json({ status: 200, data: user });
-  } catch (err) {
-    return res.json({ status: 400, message: err.message });
-  }
-};
-
 const requestResetPassword = async (req, res) => {
   const passwordReset = await userService.requestPasswordReset(req.body.email);
   return res.json(passwordReset);
@@ -85,7 +50,5 @@ module.exports = {
   getUserProfile,
   editUserProfile,
   deleteUserProfile,
-  registerUser,
-  loginUser,
   requestResetPassword,
 };

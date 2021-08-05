@@ -48,27 +48,6 @@ const deleteUserProfile = async (email) => {
   }
 };
 
-const loginUser = async (userEmail, password) => {
-  try {
-    const user = await User.findOne({ where: { email: userEmail } });
-    console.log("user from login", user);
-    if (!user || !(await hash.checkPassword(password, user.password))) {
-      throw Error("Username or password is incorrect.");
-    }
-
-    const payload = {
-      roleId: user.roleId,
-      email: userEmail,
-    };
-    const token = jwt.sign(payload, "secret-password", { expiresIn: "1h" });
-    const { roleId, email } = user;
-    return { token, user: { roleId, email } };
-  } catch (err) {
-    console.log(err);
-    throw Error(err.message || "Error in login user.");
-  }
-};
-
 const requestPasswordReset = async (email) => {
   const user = await User.findOne({ where: { email } });
   console.log(user);
@@ -96,6 +75,5 @@ module.exports = {
   getUserProfile,
   editUserProfile,
   deleteUserProfile,
-  loginUser,
   requestPasswordReset,
 };
