@@ -7,8 +7,9 @@ const { registerSchema, loginSchema } = require("../utils/schemas");
 const Role = require("../utils/roles");
 
 const router = express.Router();
+/*
 
-// admin getting all users
+// get all users
 router.get(
   "/",
   authenticateUser,
@@ -16,8 +17,33 @@ router.get(
   userController.getUsers
 );
 
-// get user data upon login
-router.get("/profile", authenticateUser, userController.getUserProfile);
+// TODO: update user by id
+
+// TODO: delete user by id
+
+// get current user data (upon login)
+router.get(
+  "/profile",
+  authenticateUser,
+  authorizeUser([Role.ADMIN, Role.OWNER, Role.CUSTOMER]),
+  userController.getUserProfile
+);
+
+// edit current user data
+router.put(
+  "/profile",
+  authenticateUser,
+  authorizeUser([Role.ADMIN, Role.OWNER, Role.CUSTOMER]),
+  userController.editUserProfile
+);
+
+// delete current user account
+router.delete(
+  "/profile",
+  authenticateUser,
+  authorizeUser([Role.ADMIN, Role.OWNER, Role.CUSTOMER]),
+  userController.deleteUserProfile
+);
 
 router.post(
   "/register",
@@ -26,6 +52,18 @@ router.post(
 );
 
 router.post("/requestRegistration", userController.registrationRequest);
+
+// get all reg requests - admin
+// router.get(
+//   "/requests",
+//   authenticateUser,
+//   authorizeUser([Role.ADMIN]),
+//   userController.getRegistrationRequests
+// );
+// submit reg request - admin
+// delete reg requests - admin
+
+*/
 
 router.post("/login", userController.loginUser);
 

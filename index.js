@@ -8,13 +8,27 @@ const routes = require("./routes");
 const PORT = process.env.PORT || 8000;
 
 const app = express();
-app.use(helmet());
+// app.use(helmet());
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// app.get("/", async (req, res) => res.send("Hello world"));
 app.use("/clean-api", routes);
+
+// error handler
+// app.use((error, req, res, next) => {
+//   return res.status(error.status || 500).send({
+//     error: {
+//       status: error.status || 500,
+//       message: error.error
+//         ? error.error.message || "Internal Server Error"
+//         : "Internal Server Error",
+//       errorCode: error.errorCode,
+//     },
+//   });
+// });
 
 models.sequelize
   .sync()

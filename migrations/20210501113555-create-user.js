@@ -20,11 +20,7 @@ module.exports = {
           as: "roleId",
         },
       },
-      firstName: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      lastName: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -33,7 +29,7 @@ module.exports = {
         unique: true,
         type: Sequelize.STRING,
       },
-      phoneNumber: {
+      phone: {
         type: Sequelize.STRING,
       },
       password: {
