@@ -8,7 +8,7 @@ const loginUser = async (params) => {
 
     const user = await User.findOne({ where: { email } });
     if (!user || !(await hash.checkPassword(password, user.password))) {
-      throw Error("Email or password is incorrect.");
+      throw Error("Email or password is incorrect!");
     }
 
     const payload = {
@@ -17,10 +17,9 @@ const loginUser = async (params) => {
     };
 
     const token = jwt.sign(payload, "secret-password", { expiresIn: "1h" });
-    return { token, user: payload };
+    return { token, roleId: user.roleId, email: user.email };
   } catch (err) {
-    console.log(err);
-    throw Error(err.message || "Error in login user.");
+    throw err.message || "Failed to login user!";
   }
 };
 

@@ -18,17 +18,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/clean-api", routes);
 
 // error handler
-// app.use((error, req, res, next) => {
-//   return res.status(error.status || 500).send({
-//     error: {
-//       status: error.status || 500,
-//       message: error.error
-//         ? error.error.message || "Internal Server Error"
-//         : "Internal Server Error",
-//       errorCode: error.errorCode,
-//     },
-//   });
-// });
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).send({
+    error: {
+      status: err.status || 500,
+      message: err.error
+        ? err.error.message || "Internal Server Error"
+        : "Internal Server Error",
+    },
+  });
+});
 
 models.sequelize
   .sync()
