@@ -17,7 +17,7 @@ const loginUser = async (params) => {
     };
 
     const token = jwt.sign(payload, "secret-password", { expiresIn: "1h" });
-    return { token, roleId: user.roleId, email: user.email };
+    return { token, user };
   } catch (err) {
     throw err.message || "Failed to login user!";
   }
@@ -28,19 +28,24 @@ const registerUser = async (params) => {
     const { roleId, name, email, password, phone } = params;
     const hashed = await hash.hashPassword(password);
 
-    const newUser = {
-      roleId,
-      name,
-      email,
-      password: hashed,
-      phone,
-    };
+    const [user, created] = await User.findOrCreate({
+      where: { email },
+      defaults: {
+        roleId,
+        name,
+        phone,
+        password: hashed,
+      },
+    });
 
-    const user = await User.create(newUser);
-    return user;
+    if (!created) {
+      throw Error("User with the given email already exists!");
+    }
+
+    const token = jwt.sign({ roleId }, "secret-password", { expiresIn: "1h" });
+    return { token, roleId, name, email, phone };
   } catch (err) {
-    console.log(err);
-    throw Error("Error in registrating user.", err);
+    throw err.message || "Failed to register user!";
   }
 };
 

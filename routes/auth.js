@@ -17,7 +17,11 @@ router.post("/request", validateRequest(schema.register), registerUser);
 // router.post("/request/approval", userController.approveRegistrationRequest);
 // router.delete("/request/approval", userController.declineRegistrationRequest);
 
-router.post("/login", loginUser);
+router.post("/login", validateRequest(schema.login), loginUser);
+
+router.post("/verify", authenticateUser, authorizeUser(), async (req, res) => {
+  res.sendStatus(200);
+});
 
 // // hitting from front when owner is selected in registration
 // router.post("/request", userController.registrationRequest);*2ws

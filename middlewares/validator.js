@@ -8,7 +8,10 @@ const validateRequest = (schema) => (req, res, next) => {
   if (error) {
     // removing "" from validation error messages
     res.status(422).send({
-      validationError: error.details.map((x) => x.message.replace(/"/g, "")),
+      // validationError: error.details.map((x) => x.message.replace(/"/g, "")),
+      error: {
+        message: "Invalid input",
+      },
     });
   } else {
     req.body = value;

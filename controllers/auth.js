@@ -2,8 +2,9 @@ const authService = require("../services/auth");
 
 const loginUser = async (req, res, next) => {
   try {
-    const user = await authService.loginUser(req.body);
-    return res.status(200).json({ user });
+    const { user, token } = await authService.loginUser(req.body);
+    res.cookie("token", token, { httpOnly: false, secure: false });
+    return res.status(200).json(user);
   } catch (err) {
     console.log("err in login controller", err);
     return next({
@@ -15,12 +16,17 @@ const loginUser = async (req, res, next) => {
   }
 };
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const user = await authService.registerUser(req.body);
-    return res.json({ status: 200, data: user });
+    return res.status(200).json({ user });
   } catch (err) {
-    return res.json({ status: 400, message: err.message });
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
   }
 };
 
