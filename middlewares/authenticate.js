@@ -8,7 +8,9 @@ const authenticateUser = async (req, res, next) => {
   if (token) {
     jwt.verify(token, "secret-password", (err, decoded) => {
       if (err) {
-        res.send({ authenticationErr: "Failed to authenticate token!" });
+        res
+          .status(403)
+          .send({ authenticationErr: "Failed to authenticate token!" });
       } else {
         console.log("decoded", decoded);
         // payload - { id, username, iat, exp }
@@ -17,7 +19,7 @@ const authenticateUser = async (req, res, next) => {
       }
     });
   } else {
-    res.send({ authenticationErr: "No provided token!" });
+    res.status(403).send({ authenticationErr: "No provided token!" });
   }
 };
 

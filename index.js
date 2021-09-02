@@ -17,10 +17,11 @@ app.use(cookieParser());
 // app.use(express.urlencoded({ extended: false }));
 
 // app.get("/", async (req, res) => res.send("Hello world"));
-app.use("/clean-api", routes);
+app.use("/api", routes);
 
 // error handler
 app.use((err, req, res, next) => {
+  console.log(err);
   res.status(err.status || 500).send({
     error: {
       status: err.status || 500,

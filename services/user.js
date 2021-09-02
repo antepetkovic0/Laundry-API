@@ -5,7 +5,10 @@ const MailService = require("../MailService");
 
 const getUsers = async () => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+    console.log(users);
     return users;
   } catch (err) {
     throw Error("Error while getting all users.");

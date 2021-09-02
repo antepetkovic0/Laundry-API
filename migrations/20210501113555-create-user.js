@@ -11,6 +11,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      hash: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
       roleId: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -30,10 +34,17 @@ module.exports = {
         type: Sequelize.STRING,
       },
       phone: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       password: {
         allowNull: false,
+        type: Sequelize.STRING,
+      },
+      username: {
+        type: Sequelize.STRING,
+      },
+      about: {
         type: Sequelize.STRING,
       },
       createdAt: {

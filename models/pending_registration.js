@@ -2,11 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Pending_Registrations = sequelize.define(
     "Pending_Registrations",
     {
-      firstName: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      lastName: {
+      name: {
         allowNull: false,
         type: DataTypes.STRING,
       },
@@ -15,12 +11,22 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      phoneNumber: {
+      phone: {
         type: DataTypes.STRING,
       },
       password: {
         allowNull: false,
         type: DataTypes.STRING,
+      },
+      hash: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
       },
     },
     {}
