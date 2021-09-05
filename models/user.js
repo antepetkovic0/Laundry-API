@@ -2,22 +2,25 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     "User",
     {
-      userId: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+      id: {
         primaryKey: true,
         allowNull: false,
-      },
-      hash: {
-        allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
       },
       roleId: {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
-      name: {
+      firstName: {
         allowNull: false,
+        type: DataTypes.STRING,
+      },
+      lastName: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      displayName: {
         type: DataTypes.STRING,
       },
       email: {
@@ -29,49 +32,34 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      password: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
-      username: {
-        type: DataTypes.STRING,
-      },
       about: {
         type: DataTypes.STRING,
       },
       status: {
-        type: DataTypes.ENUM("PENDING", "ACTIVE", "DISABLED"),
         allowNull: false,
+        type: DataTypes.ENUM("PENDING", "ACTIVE", "DISABLED"),
       },
-      pwdResetToken: {
+      password: {
+        allowNull: false,
         type: DataTypes.STRING,
       },
-      createdAt: {
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
+      passwordResetToken: {
+        type: DataTypes.STRING,
       },
     },
     {}
   );
 
   User.associate = (models) => {
-    User.hasOne(models.Shop, {
+    User.belongsTo(models.Role, {
       foreignKey: {
-        name: "shopId",
+        name: "roleId",
+        allowNull: false,
       },
     });
-    User.hasMany(models.Order, {
-      foreignKey: {
-        name: "orderId",
-      },
-    });
-    User.hasMany(models.Order_Log, {
-      foreignKey: {
-        name: "logId",
-      },
-    });
+    User.hasMany(models.Shop, { as: "shops" });
+    User.hasMany(models.Order, { as: "orders" });
+    User.hasMany(models.OrderLog, { as: "logs" });
   };
 
   return User;

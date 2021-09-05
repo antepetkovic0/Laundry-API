@@ -2,12 +2,20 @@ module.exports = (sequelize, DataTypes) => {
   const Shop = sequelize.define(
     "Shop",
     {
-      shopId: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDv4,
+      id: {
         primaryKey: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      ownerId: {
+        allowNull: false,
+        type: DataTypes.UUID,
       },
       name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      slug: {
         allowNull: false,
         type: DataTypes.STRING,
       },
@@ -16,20 +24,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       image: {
-        allowNull: false,
         type: DataTypes.STRING,
       },
       about: {
-        allowNull: false,
         type: DataTypes.TEXT,
-      },
-      ownerId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
-      slug: {
-        allowNull: false,
-        type: DataTypes.STRING,
       },
     },
     {}
@@ -38,14 +36,11 @@ module.exports = (sequelize, DataTypes) => {
   Shop.associate = (models) => {
     Shop.belongsTo(models.User, {
       foreignKey: {
-        name: "id",
+        name: "ownerId",
       },
     });
-    Shop.hasMany(models.Product, {
-      foreignKey: {
-        name: "shopId",
-      },
-    });
+    Shop.hasMany(models.Product, { as: "products" });
+    Shop.hasMany(models.Order, { as: "orders" });
   };
 
   return Shop;

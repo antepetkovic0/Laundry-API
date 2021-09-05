@@ -4,14 +4,28 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Roles", {
+    await queryInterface.createTable("OrderLog", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
-      title: {
+      orderId: {
+        type: Sequelize.UUID,
+        references: {
+          model: "Orders",
+          key: "id",
+        },
+      },
+      userId: {
+        type: Sequelize.UUID,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+      message: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -27,6 +41,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable("Roles");
+    await queryInterface.dropTable("OrderLog");
   },
 };

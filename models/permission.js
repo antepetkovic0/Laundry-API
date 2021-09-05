@@ -3,9 +3,10 @@ module.exports = (sequelize, DataTypes) => {
     "Permission",
     {
       id: {
-        type: DataTypes.INTEGER,
         primaryKey: true,
+        allowNull: false,
         autoIncrement: true,
+        type: DataTypes.INTEGER,
       },
       title: {
         allowNull: false,

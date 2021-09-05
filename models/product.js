@@ -3,25 +3,35 @@ module.exports = (sequelize, DataTypes) => {
     "Product",
     {
       id: {
+        primaryKey: true,
+        allowNull: false,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDv4,
-        primaryKey: true,
+      },
+      shopId: {
+        allowNull: false,
+        type: DataTypes.UUID,
       },
       name: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      image: {
+      slug: {
         allowNull: false,
         type: DataTypes.STRING,
       },
       price: {
-        type: DataTypes.STRING,
         allowNull: false,
+        type: DataTypes.FLOAT,
       },
-      shopId: {
-        allowNull: false,
-        type: DataTypes.UUID,
+      discount: {
+        type: DataTypes.INTEGER,
+      },
+      image: {
+        type: DataTypes.STRING,
+      },
+      content: {
+        type: DataTypes.TEXT,
       },
     },
     {}
@@ -30,8 +40,13 @@ module.exports = (sequelize, DataTypes) => {
   Product.associate = (models) => {
     Product.belongsTo(models.Shop, {
       foreignKey: {
-        name: "id",
+        name: "shopId",
       },
+    });
+    Product.belongsToMany(models.Order, {
+      through: "OrderItem",
+      foreignKey: "productId",
+      as: "orders",
     });
   };
 

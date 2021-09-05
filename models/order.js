@@ -2,23 +2,43 @@ module.exports = (sequelize, DataTypes) => {
   const Order = sequelize.define(
     "Order",
     {
-      orderId: {
+      id: {
+        primaryKey: true,
+        allowNull: false,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDv4,
-        primaryKey: true,
       },
       shopId: {
         allowNull: false,
         type: DataTypes.UUID,
       },
-      productIds: {
+      userId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
+      },
+      total: {
+        allowNull: false,
+        type: DataTypes.FLOAT,
+      },
+      tax: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+      },
+      delivery: {
+        allowNull: false,
+        type: DataTypes.BOOLEAN,
+      },
+      shipping: {
+        allowNull: false,
+        type: DataTypes.FLOAT,
+      },
+      grandTotal: {
+        allowNull: false,
+        type: DataTypes.FLOAT,
       },
       status: {
         allowNull: false,
         type: DataTypes.ENUM(
-          "CART",
           "PENDING",
           "ACCEPTED",
           "INPROGRESS",
@@ -30,22 +50,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.TEXT,
       },
-      total: {
-        allowNull: false,
-        type: DataTypes.TEXT,
-      },
-      tax: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      slug: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
     },
-    {
-      timestamps: true,
-    }
+    {}
   );
 
   Order.associate = (models) => {
@@ -59,11 +65,12 @@ module.exports = (sequelize, DataTypes) => {
         name: "userId",
       },
     });
-    Order.hasMany(models.Order_Log, {
-      foreignKey: {
-        name: "logId",
-      },
+    Order.belongsToMany(models.Product, {
+      through: "OrderItem",
+      foreignKey: "productId",
+      as: "products",
     });
+    Order.hasMany(models.OrderLog, { as: "logs" });
   };
 
   return Order;

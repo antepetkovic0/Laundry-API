@@ -4,54 +4,37 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Shops", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      roleId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
+      ownerId: {
+        type: Sequelize.UUID,
         references: {
-          model: "Roles",
+          model: "Users",
           key: "id",
         },
       },
-      firstName: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      lastName: {
+      slug: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      displayName: {
+      address: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      email: {
-        allowNull: false,
-        unique: true,
-        type: Sequelize.STRING,
-      },
-      phone: {
-        allowNull: false,
+      image: {
         type: Sequelize.STRING,
       },
       about: {
-        type: Sequelize.STRING,
-      },
-      status: {
-        allowNull: false,
-        type: Sequelize.ENUM("PENDING", "ACTIVE", "DISABLED"),
-      },
-      password: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      passwordResetToken: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
@@ -65,6 +48,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Shops");
   },
 };

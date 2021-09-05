@@ -1,10 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
-  const Order_Log = sequelize.define(
-    "Order_Log",
+  const OrderLog = sequelize.define(
+    "OrderLog",
     {
-      logId: {
-        type: DataTypes.INTEGER,
+      id: {
         primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+        type: DataTypes.INTEGER,
       },
       orderId: {
         allowNull: false,
@@ -18,25 +20,22 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      createdAt: {
-        type: DataTypes.DATE,
-      },
     },
     {}
   );
 
-  Order_Log.associate = (models) => {
-    Order_Log.hasOne(models.User, {
+  OrderLog.associate = (models) => {
+    OrderLog.belongsTo(models.User, {
       foreignKey: {
         name: "userId",
       },
     });
-    Order_Log.hasOne(models.Order, {
+    OrderLog.belongsTo(models.Order, {
       foreignKey: {
         name: "orderId",
       },
     });
   };
 
-  return Order_Log;
+  return OrderLog;
 };
