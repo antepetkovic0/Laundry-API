@@ -4,37 +4,19 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Order_Item", {
+    await queryInterface.createTable("Carts", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      productId: {
+      userId: {
         type: Sequelize.UUID,
         references: {
-          model: "Products",
+          model: "Users",
           key: "id",
         },
-      },
-      orderId: {
-        type: Sequelize.UUID,
-        references: {
-          model: "Orders",
-          key: "id",
-        },
-      },
-      price: {
-        allowNull: false,
-        type: Sequelize.FLOAT,
-      },
-      quantity: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-      },
-      discount: {
-        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -48,6 +30,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable("Order_Item");
+    await queryInterface.dropTable("Carts");
   },
 };

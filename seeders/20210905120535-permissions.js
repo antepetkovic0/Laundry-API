@@ -15,13 +15,7 @@ module.exports = {
         },
         {
           title: "READ_SHOP",
-          description: "Can read all shops",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          title: "READ_OWN_SHOP",
-          description: "Can read only own shops",
+          description: "Can read shops",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -69,13 +63,7 @@ module.exports = {
         },
         {
           title: "READ_ORDER",
-          description: "Can read all orders",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          title: "READ_OWN_ORDER",
-          description: "Can read own orders",
+          description: "Can read orders",
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -88,6 +76,12 @@ module.exports = {
         {
           title: "EDIT_ORDER_STATUS",
           description: "Can edit order status",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          title: "MANAGE_CART",
+          description: "Can read and edit cart",
           createdAt: new Date(),
           updatedAt: new Date(),
         },

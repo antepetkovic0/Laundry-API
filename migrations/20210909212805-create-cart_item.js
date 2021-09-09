@@ -4,7 +4,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Order_Item", {
+    await queryInterface.createTable("Cart_Item", {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -18,10 +18,10 @@ module.exports = {
           key: "id",
         },
       },
-      orderId: {
+      cartId: {
         type: Sequelize.UUID,
         references: {
-          model: "Orders",
+          model: "Carts",
           key: "id",
         },
       },
@@ -48,6 +48,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable("Order_Item");
+    await queryInterface.dropTable("Cart_Item");
   },
 };

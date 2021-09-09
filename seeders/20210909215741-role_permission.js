@@ -20,6 +20,12 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          roleId: 2,
+          permissionId: 2,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
           roleId: 3,
           permissionId: 2,
           createdAt: new Date(),
@@ -56,19 +62,13 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          roleId: 1,
-          permissionId: 7,
+          roleId: 3,
+          permissionId: 6,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           roleId: 2,
-          permissionId: 7,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          roleId: 3,
           permissionId: 7,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -86,19 +86,31 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          roleId: 1,
+          permissionId: 10,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
           roleId: 2,
           permissionId: 10,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          roleId: 1,
-          permissionId: 11,
+          roleId: 3,
+          permissionId: 10,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           roleId: 3,
+          permissionId: 11,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          roleId: 1,
           permissionId: 12,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -106,12 +118,6 @@ module.exports = {
         {
           roleId: 3,
           permissionId: 13,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          roleId: 2,
-          permissionId: 14,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
