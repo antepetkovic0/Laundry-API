@@ -30,4 +30,11 @@ module.exports = {
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/),
   }),
+  createShop: joi.object({
+    name: joi.string().required(),
+    slug: joi.string().required().min(5).max(15),
+    address: joi.string().required().min(10).max(40),
+    image: joi.string().required(),
+    about: joi.string(),
+  }),
 };

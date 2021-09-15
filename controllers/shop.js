@@ -10,6 +10,18 @@ const getShops = async (req, res) => {
   }
 };
 
+const createShop = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { id } = req.decoded;
+    const shop = await shopService.createShop(id, req.body);
+    return res.json(shop);
+  } catch (err) {
+    return res.json({ status: 400, message: err.message });
+  }
+};
+
 module.exports = {
   getShops,
+  createShop,
 };
