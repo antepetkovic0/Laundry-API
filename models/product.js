@@ -44,12 +44,12 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
     Product.belongsToMany(models.Order, {
-      through: "OrderItem",
+      through: "Order_Item",
       foreignKey: "productId",
       as: "orders",
     });
     Product.belongsToMany(models.Cart, {
-      through: "CartItem",
+      through: "Cart_Item",
       foreignKey: "productId",
       as: "carts",
     });

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      ownerId: {
+      userId: {
         allowNull: false,
         type: DataTypes.UUID,
       },
@@ -36,7 +36,8 @@ module.exports = (sequelize, DataTypes) => {
   Shop.associate = (models) => {
     Shop.belongsTo(models.User, {
       foreignKey: {
-        name: "ownerId",
+        name: "userId",
+        as: "user",
       },
     });
     Shop.hasMany(models.Product, { as: "products" });

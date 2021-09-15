@@ -1,17 +1,74 @@
-const jwt = require("jsonwebtoken");
-const hash = require("../utils/hash");
-const { User, Pending_Registrations } = require("../models");
+const { Op } = require("sequelize");
+const { User } = require("../models");
 const MailService = require("../MailService");
 
-const getUsers = async () => {
+const getActiveUsers = async () => {
   try {
     const users = await User.findAll({
+      where: {
+        [Op.or]: [{ status: "ACTIVE" }, { status: "DISABLED" }],
+      },
       order: [["createdAt", "DESC"]],
     });
-    console.log(users);
+    // console.log(users);
     return users;
   } catch (err) {
-    throw Error("Error while getting all users.");
+    throw Error("Error while getting active users.");
+  }
+};
+const getPendingUsers = async () => {
+  try {
+    const users = await User.findAll({
+      where: { status: "PENDING" },
+      order: [["createdAt", "DESC"]],
+    });
+    return users;
+  } catch (err) {
+    throw Error("Error while getting pending users.");
+  }
+};
+
+const approvePendingRequest = async (id) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        [Op.and]: [{ status: "PENDING" }, { id }],
+      },
+    });
+
+    if (!user) {
+      throw Error("Request does not exist anymore!");
+    }
+
+    user.status = "ACTIVE";
+    await user.save();
+
+    const name = `${user.firstName} ${user.lastName}`;
+    const payload = {
+      name,
+      url: `http://localhost:3000/auth`,
+    };
+
+    const mailInfo = {
+      to: user.email,
+      subject: "CleanZee - Account activated",
+      template: "serviceApprove",
+      context: payload,
+      attachments: [],
+    };
+    const mailService = new MailService();
+    await mailService.sendMail(mailInfo);
+    return user;
+  } catch (err) {
+    console.log("Error", err);
+  }
+};
+
+const declinePendingRequest = async (id) => {
+  try {
+    await User.destroy({ where: { id } });
+  } catch (err) {
+    throw Error("Failed to delete pending request!");
   }
 };
 
@@ -74,7 +131,10 @@ const requestPasswordReset = async (email) => {
 };
 
 module.exports = {
-  getUsers,
+  getActiveUsers,
+  getPendingUsers,
+  approvePendingRequest,
+  declinePendingRequest,
   getUserProfile,
   editUserProfile,
   deleteUserProfile,

@@ -1,26 +1,30 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
 const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require("uuid");
-const models = require("../models");
-const { User, Pending_Registrations } = require("../models");
-const MailService = require("../MailService");
+const { User, Permission, Role } = require("../models");
 const { checkPassword, hashPassword } = require("../utils/hash");
 
 const loginUser = async (params) => {
   try {
     const { email, password: givenPass } = params;
+    const user = await User.findOne({
+      where: { email },
+    });
 
-    const user = await User.findOne({ where: { email } });
     if (!user || !(await checkPassword(givenPass, user.password))) {
       throw Error("Email or password is incorrect!");
+    }
+
+    if (user.status === "PENDING") {
+      throw Error("Account has not been approved yet!");
     }
 
     const payload = {
       roleId: user.roleId,
       email: user.email,
+      id: user.id,
     };
     const token = jwt.sign(payload, "secret-password", { expiresIn: "1h" });
-    const { password, hash, ...rest } = user.dataValues;
+    const { id, password, passwordResetToken, ...rest } = user.dataValues;
     return { token, rest };
   } catch (err) {
     throw err.message || "Failed to login user!";
@@ -29,23 +33,18 @@ const loginUser = async (params) => {
 
 const registerUser = async (params) => {
   try {
-    const { roleId, name, email, password, phone } = params;
-
-    const isPending = await Pending_Registrations.findOne({ where: { email } });
-    if (isPending) {
-      throw Error("User with given email already exists!");
-    }
+    const { roleId, firstName, lastName, email, password, phone } = params;
 
     const hashedPassword = await hashPassword(password);
-    const uuid = uuidv4();
     const [user, created] = await User.findOrCreate({
       where: { email },
       defaults: {
         roleId,
-        name,
+        firstName,
+        lastName,
         phone,
         password: hashedPassword,
-        hash: uuid,
+        status: roleId === 2 ? "PENDING" : "ACTIVE",
       },
     });
 
@@ -53,141 +52,45 @@ const registerUser = async (params) => {
       throw Error("User with given email already exists!");
     }
 
-    // todo env secret pass
-    const token = jwt.sign({ roleId }, "secret-password", { expiresIn: "1h" });
-    return { token, roleId, name, email, phone };
+    return `Thank you for registering into our application! ${
+      user.status === "PENDING"
+        ? "Our team has been notified and you will receive activation email as soon as possible."
+        : "Feel free to log in with your credentials."
+    }`;
   } catch (err) {
     throw err.message || "Failed to register user!";
   }
 };
 
-const registrationRequest = async (params) => {
+const getProfile = async (userId) => {
   try {
-    const { name, email, password, phone } = params;
-
-    const userExists = await User.findOne({ where: { email } });
-    if (userExists) {
-      throw Error("User with given email already exists!");
-    }
-
-    const hashedPassword = await hashPassword(password);
-    const uuid = uuidv4();
-    const [_, created] = await Pending_Registrations.findOrCreate({
-      where: { email },
-      defaults: {
-        name,
-        phone,
-        password: hashedPassword,
-        hash: uuid,
-      },
+    const user = await User.findOne({
+      where: { id: userId },
+      include: [
+        {
+          model: Role,
+          attributes: ["id", "title"],
+          include: [
+            {
+              model: Permission,
+              as: "permissions",
+              attributes: ["title", "description"],
+            },
+          ],
+        },
+      ],
     });
 
-    if (!created) {
-      throw Error("User with the given email already exists!");
-    }
-
-    return "Thank you for registering into our application! Our team has been notified and you will receive activation email as soon as possible.";
+    const { id, password, passwordResetToken, ...rest } = user.dataValues;
+    console.log("rest", rest);
+    return rest;
   } catch (err) {
-    console.log(err);
-    throw err.message || "Failed to send registration request!";
+    throw err.message || "Failed to login user!";
   }
 };
-
-const getRegistrationRequests = async () => {
-  try {
-    const pending = await Pending_Registrations.findAll({
-      order: [["createdAt", "DESC"]],
-    });
-    return pending;
-  } catch (err) {
-    // console.log("Transaction should be rolled back", err);
-    throw Error("Error while getting pending registrations");
-  }
-};
-
-const approveRegistrationRequest = async (hashNum) => {
-  try {
-    const transaction = await models.sequelize.transaction(async (t) => {
-      const pendingUser = await Pending_Registrations.findOne({
-        where: { hash: hashNum },
-        transaction: t,
-      });
-
-      if (!pendingUser) {
-        throw Error("Pending registration does not exist anymore!");
-      }
-
-      console.log("pp", pendingUser);
-
-      const { name, email, phone, password, hash } = pendingUser;
-      const createdUser = await User.create(
-        { name, email, phone, password, hash, roleId: 2 },
-        { transaction: t }
-      );
-
-      const payload = {
-        name,
-        url: `http://localhost:3000/auth`,
-      };
-      const mailInfo = {
-        to: email,
-        subject: "CleanZee - Account activated",
-        template: "serviceApprove",
-        context: payload,
-        attachments: [],
-      };
-      const mailService = new MailService();
-      await mailService.sendMail(mailInfo);
-
-      await pendingUser.destroy({ transaction: t });
-      console.log("created user", createdUser);
-      return createdUser;
-    });
-    return transaction;
-  } catch (err) {
-    console.log("Transaction should be rolled back", err);
-  }
-};
-
-const declineRegistrationRequest = async (hash) => {
-  try {
-    const deleted = await Pending_Registrations.destroy({ where: { hash } });
-    if (!deleted) {
-      throw Error("Failed to delete registration request!");
-    }
-  } catch (err) {
-    console.log(err);
-    throw err.message || "Error while declining request!";
-  }
-};
-
-// const userActivation = async (req, res, next) => {
-//   try {
-//     const { hash } = req.params;
-//     const activationMessage = await authService.userActivation(hash);
-//     return res.status(200).json({ activationMessage });
-//     const user = await PendingUser.findOne({ _id: hash });
-//     const newUser = new User({ ...user });
-//     await newUser.save();
-//     await user.remove();
-//     res.json({ message: `User ${hash} has been activated` });
-//   } catch (err) {
-//     return next({
-//       status: 400,
-//       error: {
-//         message: err,
-//       },
-//     });
-//   }
-// };
-
-// const approveRequest = async (email) => {};
 
 module.exports = {
   loginUser,
   registerUser,
-  registrationRequest,
-  getRegistrationRequests,
-  approveRegistrationRequest,
-  declineRegistrationRequest,
+  getProfile,
 };

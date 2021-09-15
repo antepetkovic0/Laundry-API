@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const authenticateUser = async (req, res, next) => {
   // Authorization: Bearer <acces_token>
   // const header = req.headers.authorization;
-  console.log("kolaciciciiii", req.cookies);
+  // console.log("kolaciciciiii", req.cookies);
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, "secret-password", (err, decoded) => {
@@ -12,7 +12,7 @@ const authenticateUser = async (req, res, next) => {
           .status(403)
           .send({ authenticationErr: "Failed to authenticate token!" });
       } else {
-        console.log("decoded", decoded);
+        // console.log("decoded", decoded);
         // payload - { id, username, iat, exp }
         req.decoded = decoded;
         next();

@@ -5,10 +5,22 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert(
-      "RolePermission",
+      "Role_Permission",
       [
         {
           roleId: 1,
+          permissionId: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          roleId: 2,
+          permissionId: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          roleId: 3,
           permissionId: 1,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -20,19 +32,19 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
+          roleId: 1,
+          permissionId: 3,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
           roleId: 2,
-          permissionId: 2,
+          permissionId: 3,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           roleId: 3,
-          permissionId: 2,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          roleId: 2,
           permissionId: 3,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -50,25 +62,25 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          roleId: 1,
+          roleId: 2,
           permissionId: 6,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
+          roleId: 1,
+          permissionId: 7,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
           roleId: 2,
-          permissionId: 6,
+          permissionId: 7,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
           roleId: 3,
-          permissionId: 6,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
-          roleId: 2,
           permissionId: 7,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -86,20 +98,20 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          roleId: 1,
-          permissionId: 10,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        {
           roleId: 2,
           permissionId: 10,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          roleId: 3,
-          permissionId: 10,
+          roleId: 1,
+          permissionId: 11,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          roleId: 2,
+          permissionId: 11,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -110,14 +122,20 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          roleId: 1,
+          roleId: 3,
           permissionId: 12,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
         {
-          roleId: 3,
+          roleId: 1,
           permissionId: 13,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          roleId: 3,
+          permissionId: 14,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -127,6 +145,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkDelete("RolePermission", null, {});
+    await queryInterface.bulkDelete("Role_Permission", null, {});
   },
 };

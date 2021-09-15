@@ -8,6 +8,12 @@ module.exports = {
       "Permissions",
       [
         {
+          title: "MANAGE_DASHBOARD",
+          description: "Can view dashboard, edit settings, logout",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
           title: "MANAGE_USER",
           description: "Can read, update and delete users",
           createdAt: new Date(),

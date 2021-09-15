@@ -59,7 +59,6 @@ module.exports = (sequelize, DataTypes) => {
     });
     User.hasMany(models.Shop, { as: "shops" });
     User.hasMany(models.Order, { as: "orders" });
-    User.hasMany(models.OrderLog, { as: "logs" });
   };
 
   return User;
