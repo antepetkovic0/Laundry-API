@@ -32,7 +32,6 @@ const registerUser = async (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
   try {
-    console.log("kol", req.decoded);
     const user = await authService.getProfile(req.decoded.id);
     return res.status(200).json(user);
   } catch (err) {

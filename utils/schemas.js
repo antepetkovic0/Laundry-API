@@ -2,7 +2,7 @@ const joi = require("joi");
 
 module.exports = {
   register: joi.object({
-    roleId: joi.number().min(1).max(3),
+    roleId: joi.number().min(2).max(3),
     firstName: joi
       .string()
       .required()
@@ -36,5 +36,16 @@ module.exports = {
     address: joi.string().required().min(10).max(40),
     image: joi.string().required(),
     about: joi.string(),
+    firstName: joi.string().required(),
+    lastName: joi.string().required(),
+  }),
+  createProduct: joi.object({
+    shopId: joi.string().required(),
+    name: joi.string().required(),
+    slug: joi.string().required().min(5).max(15),
+    price: joi.string().required(),
+    discount: joi.number().min(1).max(99),
+    image: joi.string().required(),
+    content: joi.string(),
   }),
 };

@@ -16,6 +16,7 @@ const getActiveUsers = async () => {
     throw Error("Error while getting active users.");
   }
 };
+
 const getPendingUsers = async () => {
   try {
     const users = await User.findAll({
