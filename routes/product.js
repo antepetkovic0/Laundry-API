@@ -2,7 +2,11 @@ const express = require("express");
 const { authenticateUser } = require("../middlewares/authenticate");
 const { authorizeUser } = require("../middlewares/authorize");
 const { validateRequest } = require("../middlewares/validator");
-const { createProduct, deleteProduct } = require("../controllers/product");
+const {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+} = require("../controllers/product");
 const schema = require("../utils/schemas");
 const Role = require("../utils/roles");
 
@@ -14,6 +18,14 @@ router.post(
   authorizeUser([Role.OWNER]),
   validateRequest(schema.createProduct),
   createProduct
+);
+
+router.put(
+  "/:id",
+  authenticateUser,
+  authorizeUser([Role.OWNER]),
+  validateRequest(schema.createProduct),
+  updateProduct
 );
 
 router.delete(

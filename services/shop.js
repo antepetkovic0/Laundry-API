@@ -5,7 +5,6 @@ const { Shop, User, Product } = require("../models");
 const getScopedShops = async (roleId, userId) => {
   try {
     if (roleId === roles.OWNER) {
-      console.log("we here");
       const shops = await Shop.findAll({
         where: { userId },
         include: [
@@ -23,7 +22,6 @@ const getScopedShops = async (roleId, userId) => {
       return shops;
     }
 
-    console.log("we in user here");
     const shops = await Shop.findAll({
       include: [
         {

@@ -30,6 +30,20 @@ const registerUser = async (req, res, next) => {
   }
 };
 
+const googleAuth = async (req, res, next) => {
+  try {
+    const message = await authService.googleAuth(req.body);
+    return res.status(200).json({ message });
+  } catch (err) {
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
 const getProfile = async (req, res, next) => {
   try {
     const user = await authService.getProfile(req.decoded.id);
@@ -127,6 +141,7 @@ const declineRegistrationRequest = async (req, res, next) => {
 module.exports = {
   loginUser,
   registerUser,
+  googleAuth,
   getProfile,
   registrationRequest,
   getRegistrationRequests,

@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   registerUser,
+  googleAuth,
   registrationRequest,
   getRegistrationRequests,
   approveRegistrationRequest,
@@ -19,6 +20,8 @@ const router = express.Router();
 router.post("/register", validateRequest(schema.register), registerUser);
 
 router.post("/login", validateRequest(schema.login), loginUser);
+
+router.post("/google", validateRequest(schema.googleAuth), googleAuth);
 
 router.get("/profile", authenticateUser, authorizeUser(), getProfile);
 

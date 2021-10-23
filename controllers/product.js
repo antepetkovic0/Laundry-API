@@ -2,8 +2,24 @@ const productService = require("../services/product");
 
 const createProduct = async (req, res, next) => {
   try {
-    console.log("prodc", req.body);
     const product = await productService.createProduct(req.body);
+    return res.json(product);
+  } catch (err) {
+    console.log("errr", err);
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
+const updateProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { id: userId } = req.decoded;
+    const product = await productService.updateProduct(id, userId, req.body);
     return res.json(product);
   } catch (err) {
     console.log("errr", err);
@@ -35,5 +51,6 @@ const deleteProduct = async (req, res, next) => {
 
 module.exports = {
   createProduct,
+  updateProduct,
   deleteProduct,
 };
