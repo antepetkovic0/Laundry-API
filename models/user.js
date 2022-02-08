@@ -29,22 +29,23 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       phone: {
-        allowNull: false,
         type: DataTypes.STRING,
       },
       about: {
         type: DataTypes.STRING,
       },
-      status: {
-        allowNull: false,
-        type: DataTypes.ENUM("PENDING", "ACTIVE", "DISABLED"),
+      picture: {
+        type: DataTypes.STRING,
       },
       password: {
-        allowNull: false,
         type: DataTypes.STRING,
       },
       passwordResetToken: {
         type: DataTypes.STRING,
+      },
+      status: {
+        allowNull: false,
+        type: DataTypes.ENUM("PENDING", "ACTIVE", "DISABLED"),
       },
     },
     {}

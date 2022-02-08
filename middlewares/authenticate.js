@@ -1,26 +1,21 @@
-const jwt = require("jsonwebtoken");
+const { verifyCustomToken } = require("../utils/token");
 
 const authenticateUser = async (req, res, next) => {
-  // Authorization: Bearer <acces_token>
-  // const header = req.headers.authorization;
-  // console.log("kolaciciciiii", req.cookies);
   const { token } = req.cookies;
+
   if (token) {
-    jwt.verify(token, "secret-password", (err, decoded) => {
-      if (err) {
-        res
-          .status(403)
-          .send({ authenticationErr: "Failed to authenticate token!" });
-      } else {
-        // console.log("decoded", decoded);
-        // payload - { id, username, iat, exp }
-        req.decoded = decoded;
-        next();
-      }
-    });
-  } else {
-    res.status(403).send({ authenticationErr: "No provided token!" });
+    try {
+      const decoded = await verifyCustomToken(token);
+      req.decoded = decoded;
+      return next();
+    } catch (err) {
+      console.log("JWT error", err);
+      return res
+        .status(403)
+        .send({ authenticationErr: "Failed to authenticate token!" });
+    }
   }
+  return res.status(403).send({ authenticationErr: "No provided token!" });
 };
 
 module.exports = { authenticateUser };

@@ -2,7 +2,7 @@ const joi = require("joi");
 
 module.exports = {
   register: joi.object({
-    roleId: joi.number().min(2).max(3),
+    roleId: joi.number().min(1).max(3),
     firstName: joi
       .string()
       .required()

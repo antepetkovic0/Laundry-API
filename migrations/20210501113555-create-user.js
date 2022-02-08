@@ -36,22 +36,23 @@ module.exports = {
         type: Sequelize.STRING,
       },
       phone: {
-        allowNull: false,
         type: Sequelize.STRING,
       },
       about: {
         type: Sequelize.STRING,
       },
-      status: {
-        allowNull: false,
-        type: Sequelize.ENUM("PENDING", "ACTIVE", "DISABLED"),
+      picture: {
+        type: Sequelize.STRING,
       },
       password: {
-        allowNull: false,
         type: Sequelize.STRING,
       },
       passwordResetToken: {
         type: Sequelize.STRING,
+      },
+      status: {
+        allowNull: false,
+        type: Sequelize.ENUM("PENDING", "ACTIVE", "DISABLED"),
       },
       createdAt: {
         allowNull: false,

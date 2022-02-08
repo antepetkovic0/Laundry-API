@@ -2,9 +2,8 @@ const authService = require("../services/auth");
 
 const loginUser = async (req, res, next) => {
   try {
-    const { rest: user, token } = await authService.loginUser(req.body);
+    const token = await authService.loginUser(req.body);
     res.cookie("token", token, { httpOnly: false, secure: false });
-    // return res.sendStatus(200).json(user);
     return res.sendStatus(200);
   } catch (err) {
     return next({
@@ -32,8 +31,12 @@ const registerUser = async (req, res, next) => {
 
 const googleAuth = async (req, res, next) => {
   try {
-    const message = await authService.googleAuth(req.body);
-    return res.status(200).json({ message });
+    const response = await authService.googleAuth(req.body);
+    if (response.message) {
+      return res.status(200).json({ message: response.message });
+    }
+    res.cookie("token", req.body.token, { httpOnly: false, secure: false });
+    return res.sendStatus(200);
   } catch (err) {
     return next({
       status: 400,
