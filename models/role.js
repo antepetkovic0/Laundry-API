@@ -2,6 +2,12 @@ module.exports = (sequelize, DataTypes) => {
   const Role = sequelize.define(
     "Role",
     {
+      id: {
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+        type: DataTypes.INTEGER,
+      },
       title: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -11,15 +17,11 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Role.associate = (models) => {
-    Role.belongsTo(models.User, {
-      foreignKey: {
-        name: "roleId",
-        allowNull: false,
-      },
-      as: "roles",
+    Role.hasMany(models.User, {
+      as: "users",
     });
     Role.belongsToMany(models.Permission, {
-      through: "RolePermission",
+      through: "Role_Permission",
       foreignKey: "roleId",
       as: "permissions",
     });

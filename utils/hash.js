@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 
 const hashPassword = async (password) => {
   try {
-    console.log("pass", password);
+    // console.log("pass", password);
     const hash = await bcrypt.hash(password, 10);
     return hash;
   } catch (err) {

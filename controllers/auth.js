@@ -2,11 +2,10 @@ const authService = require("../services/auth");
 
 const loginUser = async (req, res, next) => {
   try {
-    const { rest: user, token } = await authService.loginUser(req.body);
+    const token = await authService.loginUser(req.body);
     res.cookie("token", token, { httpOnly: false, secure: false });
-    return res.status(200).json(user);
+    return res.sendStatus(200);
   } catch (err) {
-    console.log("err in login controller", err);
     return next({
       status: 400,
       error: {
@@ -18,8 +17,40 @@ const loginUser = async (req, res, next) => {
 
 const registerUser = async (req, res, next) => {
   try {
-    const user = await authService.registerUser(req.body);
-    return res.status(200).json({ user });
+    const message = await authService.registerUser(req.body);
+    return res.status(200).json({ message });
+  } catch (err) {
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
+const googleAuth = async (req, res, next) => {
+  try {
+    const response = await authService.googleAuth(req.body);
+    if (response.message) {
+      return res.status(200).json({ message: response.message });
+    }
+    res.cookie("token", req.body.token, { httpOnly: false, secure: false });
+    return res.sendStatus(200);
+  } catch (err) {
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
+const getProfile = async (req, res, next) => {
+  try {
+    const user = await authService.getProfile(req.decoded.id);
+    return res.status(200).json(user);
   } catch (err) {
     return next({
       status: 400,
@@ -113,6 +144,8 @@ const declineRegistrationRequest = async (req, res, next) => {
 module.exports = {
   loginUser,
   registerUser,
+  googleAuth,
+  getProfile,
   registrationRequest,
   getRegistrationRequests,
   approveRegistrationRequest,

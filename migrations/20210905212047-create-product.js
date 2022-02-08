@@ -4,55 +4,40 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Products", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
       },
-      roleId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
+      shopId: {
+        type: Sequelize.UUID,
         references: {
-          model: "Roles",
+          model: "Shops",
           key: "id",
         },
       },
-      firstName: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      lastName: {
+      slug: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      displayName: {
-        type: Sequelize.STRING,
-      },
-      email: {
+      price: {
         allowNull: false,
-        unique: true,
+        type: Sequelize.FLOAT,
+      },
+      discount: {
+        type: Sequelize.INTEGER,
+      },
+      image: {
         type: Sequelize.STRING,
       },
-      phone: {
-        type: Sequelize.STRING,
-      },
-      about: {
-        type: Sequelize.STRING,
-      },
-      picture: {
-        type: Sequelize.STRING,
-      },
-      password: {
-        type: Sequelize.STRING,
-      },
-      passwordResetToken: {
-        type: Sequelize.STRING,
-      },
-      status: {
-        allowNull: false,
-        type: Sequelize.ENUM("PENDING", "ACTIVE", "DISABLED"),
+      content: {
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
@@ -66,6 +51,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Products");
   },
 };

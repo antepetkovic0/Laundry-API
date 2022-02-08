@@ -4,32 +4,37 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("pending_registrations", {
+    await queryInterface.createTable("Shops", {
       id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
       },
-      hash: {
-        allowNull: false,
-        type: Sequelize.STRING,
+      userId: {
+        type: Sequelize.UUID,
+        references: {
+          model: "Users",
+          key: "id",
+        },
       },
       name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      email: {
-        allowNull: false,
-        unique: true,
-        type: Sequelize.STRING,
-      },
-      phone: {
-        type: Sequelize.STRING,
-      },
-      password: {
+      slug: {
         allowNull: false,
         type: Sequelize.STRING,
+      },
+      address: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      image: {
+        type: Sequelize.STRING,
+      },
+      about: {
+        type: Sequelize.TEXT,
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +48,6 @@ module.exports = {
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable("pending_registrations");
+    await queryInterface.dropTable("Shops");
   },
 };

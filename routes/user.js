@@ -1,19 +1,37 @@
 const express = require("express");
-const userController = require("../controllers/user");
 const { authenticateUser } = require("../middlewares/authenticate");
 const { authorizeUser } = require("../middlewares/authorize");
-const { validateRequest } = require("../middlewares/validator");
-const { registerSchema, loginSchema } = require("../utils/schemas");
+const {
+  getActiveUsers,
+  getPendingUsers,
+  approvePendingRequest,
+  declinePendingRequest,
+} = require("../controllers/user");
 const Role = require("../utils/roles");
 
 const router = express.Router();
 
-// get all users
+router.get("/", authenticateUser, authorizeUser([Role.ADMIN]), getActiveUsers);
+
 router.get(
-  "/",
+  "/pending",
   authenticateUser,
   authorizeUser([Role.ADMIN]),
-  userController.getUsers
+  getPendingUsers
+);
+
+router.post(
+  "/pending",
+  authenticateUser,
+  authorizeUser([Role.ADMIN]),
+  approvePendingRequest
+);
+
+router.delete(
+  "/pending/:hash",
+  authenticateUser,
+  authorizeUser([Role.ADMIN]),
+  declinePendingRequest
 );
 
 // TODO: update user by id

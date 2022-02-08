@@ -1,11 +1,51 @@
 const userService = require("../services/user");
 
-const getUsers = async (req, res) => {
+const getActiveUsers = async (req, res) => {
   try {
-    const users = await userService.getUsers();
+    const users = await userService.getActiveUsers();
     return res.json(users);
   } catch (err) {
     return res.json({ status: 400, message: err.message });
+  }
+};
+
+const getPendingUsers = async (req, res) => {
+  try {
+    const users = await userService.getPendingUsers();
+    console.log("pending", users);
+    return res.json(users);
+  } catch (err) {
+    return res.json({ status: 400, message: err.message });
+  }
+};
+
+const approvePendingRequest = async (req, res, next) => {
+  try {
+    const { hash } = req.body;
+    const user = await userService.approvePendingRequest(hash);
+    return res.status(200).json(user);
+  } catch (err) {
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
+const declinePendingRequest = async (req, res, next) => {
+  try {
+    const { hash } = req.params;
+    await userService.declinePendingRequest(hash);
+    return res.sendStatus(200);
+  } catch (err) {
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
   }
 };
 
@@ -46,7 +86,10 @@ const requestResetPassword = async (req, res) => {
 };
 
 module.exports = {
-  getUsers,
+  getActiveUsers,
+  getPendingUsers,
+  approvePendingRequest,
+  declinePendingRequest,
   getUserProfile,
   editUserProfile,
   deleteUserProfile,
