@@ -2,39 +2,96 @@
 const roles = require("../utils/roles");
 const { Shop, User, Product } = require("../models");
 
-const getScopedShops = async (roleId, userId) => {
+const findAllOwnerShops = async (userId) => {
+  const shops = await Shop.findAll({
+    where: { userId },
+    include: [
+      {
+        model: User,
+        attributes: ["firstName", "lastName"],
+      },
+      {
+        model: Product,
+        as: "products",
+      },
+    ],
+    order: [["createdAt", "DESC"]],
+  });
+
+  return shops;
+};
+
+const findAllShops = async () => {
+  const shops = await Shop.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ["firstName", "lastName"],
+      },
+      {
+        model: Product,
+        as: "products",
+      },
+    ],
+    order: [["createdAt", "DESC"]],
+  });
+
+  return shops;
+};
+
+const findAndCountOwnerShops = async (userId) => {
+  const shops = await Shop.findAndCountAll({
+    where: { userId },
+    include: [
+      {
+        model: User,
+        attributes: ["firstName", "lastName"],
+      },
+    ],
+    limit: 1,
+    order: [["createdAt", "DESC"]],
+  });
+
+  return shops;
+};
+
+const findAndCountShops = async () => {
+  const shops = await Shop.findAndCountAll({
+    include: [
+      {
+        model: User,
+        attributes: ["firstName", "lastName"],
+      },
+    ],
+    limit: 1,
+    order: [["createdAt", "DESC"]],
+  });
+
+  return shops;
+};
+
+const getScopedShops = async (roleId, userId, forDashboardOverview = false) => {
   try {
-    if (roleId === roles.OWNER) {
-      const shops = await Shop.findAll({
-        where: { userId },
-        include: [
-          {
-            model: User,
-            attributes: ["firstName", "lastName"],
-          },
-          {
-            model: Product,
-            as: "products",
-          },
-        ],
-        order: [["createdAt", "DESC"]],
-      });
+    if (roleId === roles.OWNER && !forDashboardOverview) {
+      const shops = await findAllOwnerShops(userId);
+
       return shops;
     }
 
-    const shops = await Shop.findAll({
-      include: [
-        {
-          model: User,
-          attributes: ["firstName", "lastName"],
-        },
-        {
-          model: Product,
-          as: "products",
-        },
-      ],
-      order: [["createdAt", "DESC"]],
-    });
+    if (roleId === roles.OWNER && forDashboardOverview) {
+      const shops = await findAndCountOwnerShops(userId);
+
+      return shops;
+    }
+
+    if (roleId !== roles.OWNER && !forDashboardOverview) {
+      const shops = await findAllShops();
+
+      return shops;
+    }
+
+    const shops = await findAndCountShops();
+
     return shops;
   } catch (err) {
     console.log(err);

@@ -30,10 +30,6 @@ module.exports = {
       .required()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/),
   }),
-  googleAuth: joi.object({
-    token: joi.string().required(),
-    roleId: joi.number().min(2).max(3),
-  }),
   createShop: joi.object({
     name: joi.string().required(),
     slug: joi.string().required().min(5).max(15),

@@ -8,10 +8,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      roleId: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-      },
+      // roleId: {
+      //   allowNull: false,
+      //   type: DataTypes.INTEGER,
+      // },
       firstName: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -53,10 +53,11 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = (models) => {
     User.belongsTo(models.Role, {
-      foreignKey: {
-        name: "roleId",
-        allowNull: false,
-      },
+      as: "role",
+      // foreignKey: {
+      //   name: "roleId",
+      //   allowNull: false,
+      // },
     });
     User.hasMany(models.Shop, { as: "shops" });
     User.hasMany(models.Order, { as: "orders" });

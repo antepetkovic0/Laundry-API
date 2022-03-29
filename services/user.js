@@ -17,6 +17,22 @@ const getActiveUsers = async () => {
   }
 };
 
+const findAndCountActiveUsers = async () => {
+  try {
+    const users = await User.findAndCountAll({
+      where: {
+        [Op.or]: [{ status: "ACTIVE" }, { status: "DISABLED" }],
+      },
+      limit: 1,
+      order: [["createdAt", "DESC"]],
+    });
+    // console.log(users);
+    return users;
+  } catch (err) {
+    throw Error("Error while getting active users.");
+  }
+};
+
 const getPendingUsers = async () => {
   try {
     const users = await User.findAll({
@@ -26,6 +42,20 @@ const getPendingUsers = async () => {
     return users;
   } catch (err) {
     throw Error("Error while getting pending users.");
+  }
+};
+
+const findAndCountPendingUsers = async () => {
+  try {
+    const users = await User.findAndCountAll({
+      where: { status: "PENDING" },
+      limit: 1,
+      order: [["createdAt", "DESC"]],
+    });
+    console.log(users);
+    return users;
+  } catch (err) {
+    throw Error("Error while getting active users.");
   }
 };
 
@@ -133,7 +163,9 @@ const requestPasswordReset = async (email) => {
 
 module.exports = {
   getActiveUsers,
+  findAndCountActiveUsers,
   getPendingUsers,
+  findAndCountPendingUsers,
   approvePendingRequest,
   declinePendingRequest,
   getUserProfile,
