@@ -12,7 +12,6 @@ const getActiveUsers = async (req, res) => {
 const getPendingUsers = async (req, res) => {
   try {
     const users = await userService.getPendingUsers();
-    console.log("pending", users);
     return res.json(users);
   } catch (err) {
     return res.json({ status: 400, message: err.message });
