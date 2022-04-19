@@ -10,6 +10,24 @@ const getShops = async (req, res) => {
   }
 };
 
+const getSpecificShop = async (req, res, next) => {
+  try {
+    const { roleId, id } = req.decoded;
+    const { slug } = req.params;
+    console.log("req params", req.params);
+    const shop = await shopService.getSpecificShop(roleId, id, slug);
+    return res.json(shop);
+  } catch (err) {
+    console.log("errr", err);
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
 const createShop = async (req, res) => {
   try {
     const { id } = req.decoded;
@@ -39,6 +57,7 @@ const deleteShop = async (req, res, next) => {
 
 module.exports = {
   getShops,
+  getSpecificShop,
   createShop,
   deleteShop,
 };

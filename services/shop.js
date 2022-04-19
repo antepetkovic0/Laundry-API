@@ -8,6 +8,7 @@ const findAllOwnerShops = async (userId) => {
     include: [
       {
         model: User,
+        as: "user",
         attributes: ["firstName", "lastName"],
       },
       {
@@ -26,6 +27,7 @@ const findAllShops = async () => {
     include: [
       {
         model: User,
+        as: "user",
         attributes: ["firstName", "lastName"],
       },
       {
@@ -45,6 +47,7 @@ const findAndCountOwnerShops = async (userId) => {
     include: [
       {
         model: User,
+        as: "user",
         attributes: ["firstName", "lastName"],
       },
     ],
@@ -60,6 +63,7 @@ const findAndCountShops = async () => {
     include: [
       {
         model: User,
+        as: "user",
         attributes: ["firstName", "lastName"],
       },
     ],
@@ -99,6 +103,36 @@ const getScopedShops = async (roleId, userId, forDashboardOverview = false) => {
   }
 };
 
+const getSpecificShop = async (roleId, userId, slug) => {
+  try {
+    const shop = await Shop.findOne({
+      where: { slug },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["firstName", "lastName"],
+        },
+        {
+          model: Product,
+          as: "products",
+        },
+      ],
+    });
+
+    // if request was made by owner and he didnt create that shop return null
+    // TODO: slug must be unique
+    if (shop && shop.userId !== userId && roleId === roles.OWNER) {
+      return null;
+    }
+
+    return shop;
+  } catch (err) {
+    console.log(err);
+    throw Error("blblbl");
+  }
+};
+
 const createShop = async (userId, shopParams) => {
   try {
     const {
@@ -128,7 +162,8 @@ const createShop = async (userId, shopParams) => {
       firstName,
       lastName,
     };
-    return { ...shop.dataValues, User: user, products: [] };
+
+    return { ...shop.dataValues, user };
   } catch (err) {
     throw err.message || "Failed to create shop!";
   }
@@ -153,6 +188,7 @@ const deleteShop = async (id, userId) => {
 
 module.exports = {
   getScopedShops,
+  getSpecificShop,
   createShop,
   deleteShop,
 };

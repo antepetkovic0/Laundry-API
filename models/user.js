@@ -59,7 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       //   allowNull: false,
       // },
     });
-    User.hasMany(models.Shop, { as: "shops" });
+    User.hasMany(models.Shop, { as: "shops", foreignKey: "userId" });
     User.hasMany(models.Order, { as: "orders" });
   };
 

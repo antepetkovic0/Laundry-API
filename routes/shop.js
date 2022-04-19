@@ -1,5 +1,10 @@
 const express = require("express");
-const { getShops, createShop, deleteShop } = require("../controllers/shop");
+const {
+  getShops,
+  getSpecificShop,
+  createShop,
+  deleteShop,
+} = require("../controllers/shop");
 const { authenticateUser } = require("../middlewares/authenticate");
 const { authorizeUser } = require("../middlewares/authorize");
 const { validateRequest } = require("../middlewares/validator");
@@ -8,7 +13,9 @@ const Role = require("../utils/roles");
 
 const router = express.Router();
 
-router.get("/", authenticateUser, authorizeUser(), getShops);
+router.get("/", authenticateUser, getShops);
+
+router.get("/:slug", authenticateUser, getSpecificShop);
 
 router.post(
   "/",
