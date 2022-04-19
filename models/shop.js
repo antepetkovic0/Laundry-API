@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },
-      userId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-      },
+      // userId: {
+      //   allowNull: false,
+      //   type: DataTypes.UUID,
+      // },
       name: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -35,10 +35,12 @@ module.exports = (sequelize, DataTypes) => {
 
   Shop.associate = (models) => {
     Shop.belongsTo(models.User, {
-      foreignKey: {
-        name: "userId",
-        as: "user",
-      },
+      as: "user",
+      foreignKey: "userId",
+      // foreignKey: {
+      //   name: "userId",
+      //   as: "user",
+      // },
     });
     Shop.hasMany(models.Product, { as: "products" });
     Shop.hasMany(models.Order, { as: "orders" });
