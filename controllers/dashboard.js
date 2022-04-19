@@ -12,7 +12,7 @@ const getDashboardUsers = async (req, res, next) => {
 
     data.users = {
       count,
-      user: rows[0] ?? null,
+      user: rows[0],
     };
 
     return res.json(data);
@@ -34,7 +34,7 @@ const getDashboardPendingRequests = async (req, res, next) => {
 
     data.pending = {
       count,
-      user: rows[0] ?? null,
+      user: rows[0],
     };
 
     return res.json(data);
@@ -58,7 +58,7 @@ const getDashboardShops = async (req, res, next) => {
 
     data.shops = {
       count,
-      shop: rows[0] ?? null,
+      shop: rows[0],
     };
 
     return res.json(data);

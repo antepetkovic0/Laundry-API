@@ -59,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
       //   allowNull: false,
       // },
     });
+    User.hasOne(models.RefreshToken, { as: "refreshToken" });
     User.hasMany(models.Shop, { as: "shops" });
     User.hasMany(models.Order, { as: "orders" });
   };

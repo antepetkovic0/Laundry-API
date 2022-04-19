@@ -10,7 +10,7 @@ const createAccessToken = (user) => {
   };
 
   const token = jwt.sign(payload, process.env.SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: "1m",
   });
 
   return token;
@@ -27,4 +27,11 @@ const verifyCustomToken = (token) =>
     });
   });
 
-module.exports = { createAccessToken, verifyCustomToken };
+const verifyRefreshTokenExpiration = (token) =>
+  token.expiryDate.getTime() < new Date().getTime();
+
+module.exports = {
+  createAccessToken,
+  verifyCustomToken,
+  verifyRefreshTokenExpiration,
+};

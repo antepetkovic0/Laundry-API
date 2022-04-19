@@ -6,6 +6,7 @@ const {
   approveRegistrationRequest,
   declineRegistrationRequest,
   loginUser,
+  refreshAccessToken,
 } = require("../controllers/auth");
 const { authenticateUser } = require("../middlewares/authenticate");
 const { authorizeUser } = require("../middlewares/authorize");
@@ -18,5 +19,7 @@ const router = express.Router();
 router.post("/register", validateRequest(schema.register), registerUser);
 
 router.post("/login", validateRequest(schema.login), loginUser);
+
+router.post("/refresh", refreshAccessToken);
 
 module.exports = router;

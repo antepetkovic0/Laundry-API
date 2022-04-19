@@ -1,7 +1,11 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
-const { User, Permission, Role } = require("../models");
+const { v4: uuidv4 } = require("uuid");
+const { User, Permission, Role, RefreshToken } = require("../models");
 const { checkPassword, hashPassword } = require("../utils/hash");
-const { createAccessToken } = require("../utils/token");
+const {
+  createAccessToken,
+  verifyRefreshTokenExpiration,
+} = require("../utils/token");
 
 const loginUser = async (params) => {
   try {
@@ -37,11 +41,23 @@ const loginUser = async (params) => {
       throw Error("Account has not been approved yet!");
     }
 
-    const token = createAccessToken(user);
+    // create access token
+    const accessToken = createAccessToken(user);
+
+    // create refresh token
+    const expiredAt = new Date();
+    expiredAt.setSeconds(expiredAt.getSeconds() + 120);
+    const refreshTokenString = uuidv4();
+
+    const refreshToken = await RefreshToken.create({
+      token: refreshTokenString,
+      userId: user.id,
+      expiryDate: expiredAt.getTime(),
+    });
 
     const { id, password, passwordResetToken, ...rest } = user.dataValues;
 
-    return { token, user: rest };
+    return { user: rest, accessToken, refreshToken: refreshToken.token };
   } catch (err) {
     throw err.message || "Failed to login user!";
   }
@@ -78,7 +94,38 @@ const registerUser = async (params) => {
   }
 };
 
+const refreshAccessToken = async (token) => {
+  if (!token) throw Error("Refresh token is required.");
+
+  try {
+    const refreshToken = await RefreshToken.findOne({ where: { token } });
+
+    if (!refreshToken) throw Error("Refresh token is not in the database.");
+
+    if (verifyRefreshTokenExpiration(refreshToken)) {
+      await RefreshToken.destroy({ where: { id: refreshToken.id } });
+
+      throw Error("Refresh token has expired.");
+    }
+
+    const user = await User.findOne({
+      where: { id: refreshToken.userId },
+      attributes: ["id", "email", "roleId"],
+    });
+    console.log(user);
+    if (!user) throw Error("Cannot find user.");
+
+    const accessToken = createAccessToken(user);
+
+    return { accessToken, refreshToken: refreshToken.token };
+  } catch (err) {
+    console.error("RefreshToken.service: ", err);
+    throw err.message || "Failed to refresh token!";
+  }
+};
+
 module.exports = {
   loginUser,
   registerUser,
+  refreshAccessToken,
 };

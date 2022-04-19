@@ -2,9 +2,15 @@ const authService = require("../services/auth");
 
 const loginUser = async (req, res, next) => {
   try {
-    const { token, user } = await authService.loginUser(req.body);
+    const { user, accessToken, refreshToken } = await authService.loginUser(
+      req.body
+    );
 
-    res.cookie("token", token, { httpOnly: false, secure: false });
+    res.cookie("token", accessToken, { httpOnly: false, secure: false });
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: false,
+      secure: false,
+    });
 
     return res.status(200).json(user);
   } catch (err) {
@@ -21,6 +27,29 @@ const registerUser = async (req, res, next) => {
   try {
     const message = await authService.registerUser(req.body);
     return res.status(200).json({ message });
+  } catch (err) {
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
+const refreshAccessToken = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    const { accessToken, refreshToken } = await authService.refreshAccessToken(
+      token
+    );
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: false,
+      secure: false,
+    });
+
+    return res.status(200).json({ accessToken });
   } catch (err) {
     return next({
       status: 400,
@@ -114,6 +143,7 @@ const declineRegistrationRequest = async (req, res, next) => {
 module.exports = {
   loginUser,
   registerUser,
+  refreshAccessToken,
   registrationRequest,
   getRegistrationRequests,
   approveRegistrationRequest,
