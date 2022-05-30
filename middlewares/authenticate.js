@@ -1,22 +1,21 @@
-const { verifyCustomToken } = require("../utils/token");
+const { verifyAccessToken } = require("../utils/token");
 
 const authenticateUser = async (req, res, next) => {
-  console.log(req.cookies);
-  const { token } = req.cookies;
+  const header = req.headers.authorization ?? "";
+  const token = header.split(" ")[1];
+
+  console.log("header", req.headers);
 
   if (token) {
     try {
-      const decoded = await verifyCustomToken(token);
+      const decoded = await verifyAccessToken(token);
       req.decoded = decoded;
       return next();
     } catch (err) {
-      console.log("JWT error", err);
-      return res
-        .status(401)
-        .send({ authenticationErr: "Failed to authenticate token!" });
+      return res.status(401).send("Failed to authenticate token!");
     }
   }
-  return res.status(401).send({ authenticationErr: "No provided token!" });
+  return res.status(401).send("No provided token!");
 };
 
 module.exports = { authenticateUser };

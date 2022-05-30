@@ -4,7 +4,7 @@ const authorizeUser = (roles = []) => (req, res, next) => {
   const userRoles = [...new Set([...roles, ...reqRoles])];
 
   if (userRoles.length && !userRoles.includes(req.decoded.roleId)) {
-    res.status(401).send({ authorizatonErr: "Unauthorized!" });
+    res.status(403).send("Unauthorized!");
   }
   next();
 };
