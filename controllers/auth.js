@@ -6,13 +6,13 @@ const loginUser = async (req, res, next) => {
       req.body
     );
 
-    res.cookie("token", accessToken, { httpOnly: false, secure: false });
-    res.cookie("refresh_token", refreshToken, {
+    // set path for refresh token cookie
+    res.cookie("refresh-token", refreshToken, {
       httpOnly: false,
       secure: false,
     });
 
-    return res.status(200).json(user);
+    return res.status(200).json({ user, accessToken });
   } catch (err) {
     return next({
       status: 400,
@@ -37,14 +37,14 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-const refreshAccessToken = async (req, res, next) => {
+const refreshTokens = async (req, res, next) => {
   try {
     const { token } = req.body;
-    const { accessToken, refreshToken } = await authService.refreshAccessToken(
+    const { accessToken, refreshToken } = await authService.refreshTokens(
       token
     );
 
-    res.cookie("refresh_token", refreshToken, {
+    res.cookie("refresh-token", refreshToken, {
       httpOnly: false,
       secure: false,
     });
@@ -143,7 +143,7 @@ const declineRegistrationRequest = async (req, res, next) => {
 module.exports = {
   loginUser,
   registerUser,
-  refreshAccessToken,
+  refreshTokens,
   registrationRequest,
   getRegistrationRequests,
   approveRegistrationRequest,

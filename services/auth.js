@@ -1,11 +1,42 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
-const { v4: uuidv4 } = require("uuid");
 const { User, Permission, Role, RefreshToken } = require("../models");
 const { checkPassword, hashPassword } = require("../utils/hash");
 const {
   createAccessToken,
+  createRefreshTokenPayload,
   verifyRefreshTokenExpiration,
 } = require("../utils/token");
+
+const registerUser = async (params) => {
+  try {
+    const { roleId, firstName, lastName, email, password, phone } = params;
+
+    const hashedPassword = await hashPassword(password);
+    const [user, created] = await User.findOrCreate({
+      where: { email },
+      defaults: {
+        roleId,
+        firstName,
+        lastName,
+        phone,
+        password: hashedPassword,
+        status: roleId === 2 ? "PENDING" : "ACTIVE",
+      },
+    });
+
+    if (!created) {
+      throw Error("User with given email already exists!");
+    }
+
+    return `Thank you for registering into our application! ${
+      user.status === "PENDING"
+        ? "Our team has been notified and you will receive activation email as soon as possible."
+        : "Feel free to log in with your credentials."
+    }`;
+  } catch (err) {
+    throw err.message || "Failed to register user!";
+  }
+};
 
 const loginUser = async (params) => {
   try {
@@ -41,60 +72,29 @@ const loginUser = async (params) => {
       throw Error("Account has not been approved yet!");
     }
 
-    // create access token
     const accessToken = createAccessToken(user);
 
-    // create refresh token
-    const expiredAt = new Date();
-    expiredAt.setSeconds(expiredAt.getSeconds() + 120);
-    const refreshTokenString = uuidv4();
-
-    const refreshToken = await RefreshToken.create({
-      token: refreshTokenString,
-      userId: user.id,
-      expiryDate: expiredAt.getTime(),
+    // if refresh exists first delete it
+    const refreshToken = await RefreshToken.findOne({
+      where: { userId: user.id },
     });
+
+    if (refreshToken) {
+      await RefreshToken.destroy({ where: { id: refreshToken.id } });
+    }
+    const newRefreshToken = await RefreshToken.create(
+      createRefreshTokenPayload(user.id)
+    );
 
     const { id, password, passwordResetToken, ...rest } = user.dataValues;
 
-    return { user: rest, accessToken, refreshToken: refreshToken.token };
+    return { user: rest, accessToken, refreshToken: newRefreshToken.token };
   } catch (err) {
     throw err.message || "Failed to login user!";
   }
 };
 
-const registerUser = async (params) => {
-  try {
-    const { roleId, firstName, lastName, email, password, phone } = params;
-
-    const hashedPassword = await hashPassword(password);
-    const [user, created] = await User.findOrCreate({
-      where: { email },
-      defaults: {
-        roleId,
-        firstName,
-        lastName,
-        phone,
-        password: hashedPassword,
-        status: roleId === 2 ? "PENDING" : "ACTIVE",
-      },
-    });
-
-    if (!created) {
-      throw Error("User with given email already exists!");
-    }
-
-    return `Thank you for registering into our application! ${
-      user.status === "PENDING"
-        ? "Our team has been notified and you will receive activation email as soon as possible."
-        : "Feel free to log in with your credentials."
-    }`;
-  } catch (err) {
-    throw err.message || "Failed to register user!";
-  }
-};
-
-const refreshAccessToken = async (token) => {
+const refreshTokens = async (token) => {
   if (!token) throw Error("Refresh token is required.");
 
   try {
@@ -112,12 +112,17 @@ const refreshAccessToken = async (token) => {
       where: { id: refreshToken.userId },
       attributes: ["id", "email", "roleId"],
     });
-    console.log(user);
+
     if (!user) throw Error("Cannot find user.");
 
     const accessToken = createAccessToken(user);
 
-    return { accessToken, refreshToken: refreshToken.token };
+    await RefreshToken.destroy({ where: { id: refreshToken.id } });
+    const newRefreshToken = await RefreshToken.create(
+      createRefreshTokenPayload(user.id)
+    );
+
+    return { accessToken, refreshToken: newRefreshToken.token };
   } catch (err) {
     console.error("RefreshToken.service: ", err);
     throw err.message || "Failed to refresh token!";
@@ -125,7 +130,7 @@ const refreshAccessToken = async (token) => {
 };
 
 module.exports = {
-  loginUser,
   registerUser,
-  refreshAccessToken,
+  loginUser,
+  refreshTokens,
 };
