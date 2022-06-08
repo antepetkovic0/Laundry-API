@@ -1,10 +1,11 @@
-const userService = require("../services/user");
+const userService = require("../services/users");
 
-const getActiveUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
-    const users = await userService.getActiveUsers();
+    const users = await userService.getUsers();
     return res.json(users);
   } catch (err) {
+    console.error(err);
     return res.json({ status: 400, message: err.message });
   }
 };
@@ -85,7 +86,7 @@ const requestResetPassword = async (req, res) => {
 };
 
 module.exports = {
-  getActiveUsers,
+  getUsers,
   getPendingUsers,
   approvePendingRequest,
   declinePendingRequest,

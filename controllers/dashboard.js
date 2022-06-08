@@ -1,14 +1,11 @@
 const { getScopedShops } = require("../services/shop");
-const {
-  findAndCountActiveUsers,
-  findAndCountPendingUsers,
-} = require("../services/user");
+const userService = require("../services/users");
 
 const getDashboardUsers = async (req, res, next) => {
   try {
     const data = {};
 
-    const { count, rows } = await findAndCountActiveUsers();
+    const { count, rows } = await userService.findAndCountUsers();
 
     data.users = {
       count,
@@ -30,7 +27,7 @@ const getDashboardPendingRequests = async (req, res, next) => {
   try {
     const data = {};
 
-    const { count, rows } = await findAndCountPendingUsers();
+    const { count, rows } = await userService.findAndCountPendingUsers();
 
     data.pending = {
       count,

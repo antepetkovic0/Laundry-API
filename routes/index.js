@@ -2,7 +2,7 @@ const express = require("express");
 
 const authRoutes = require("./auth");
 const dashboardRoutes = require("./dashboard");
-const userRoutes = require("./user");
+const userRoutes = require("./users");
 const shopRoutes = require("./shop");
 const productRoutes = require("./product");
 

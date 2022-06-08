@@ -2,22 +2,19 @@ const { Op } = require("sequelize");
 const { User } = require("../models");
 const MailService = require("../MailService");
 
-const getActiveUsers = async () => {
+const getUsers = async () => {
   try {
     const users = await User.findAll({
-      where: {
-        [Op.or]: [{ status: "ACTIVE" }, { status: "DISABLED" }],
-      },
       order: [["createdAt", "DESC"]],
     });
-    // console.log(users);
+
     return users;
   } catch (err) {
-    throw Error("Error while getting active users.");
+    throw Error("Error while getting users.");
   }
 };
 
-const findAndCountActiveUsers = async () => {
+const findAndCountUsers = async () => {
   try {
     const users = await User.findAndCountAll({
       where: {
@@ -26,22 +23,10 @@ const findAndCountActiveUsers = async () => {
       limit: 1,
       order: [["createdAt", "DESC"]],
     });
-    // console.log(users);
-    return users;
-  } catch (err) {
-    throw Error("Error while getting active users.");
-  }
-};
 
-const getPendingUsers = async () => {
-  try {
-    const users = await User.findAll({
-      where: { status: "PENDING" },
-      order: [["createdAt", "DESC"]],
-    });
     return users;
   } catch (err) {
-    throw Error("Error while getting pending users.");
+    throw Error("Error while getting users.");
   }
 };
 
@@ -162,9 +147,8 @@ const requestPasswordReset = async (email) => {
 };
 
 module.exports = {
-  getActiveUsers,
-  findAndCountActiveUsers,
-  getPendingUsers,
+  getUsers,
+  findAndCountUsers,
   findAndCountPendingUsers,
   approvePendingRequest,
   declinePendingRequest,
