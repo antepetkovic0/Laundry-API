@@ -11,7 +11,7 @@ const createAccessToken = (user) => {
   };
 
   const token = jwt.sign(payload, process.env.SECRET_KEY, {
-    expiresIn: "1m",
+    expiresIn: "15m",
   });
 
   return token;
@@ -30,7 +30,7 @@ const verifyAccessToken = (token) =>
 
 const createRefreshTokenPayload = (userId) => {
   const expiredAt = new Date();
-  expiredAt.setSeconds(expiredAt.getSeconds() + 120);
+  expiredAt.setSeconds(expiredAt.getSeconds() + 1200);
 
   const refreshTokenUUID = uuidv4();
 
