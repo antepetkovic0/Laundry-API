@@ -38,6 +38,16 @@ const createShop = async (req, res) => {
   }
 };
 
+const editShop = async (req, res) => {
+  try {
+    const { id: userId } = req.decoded;
+    await shopService.editShop(userId, req.body);
+    return res.sendStatus(200);
+  } catch (err) {
+    return res.json({ status: 400, message: err.message });
+  }
+};
+
 const deleteShop = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -59,5 +69,6 @@ module.exports = {
   getShops,
   getSpecificShop,
   createShop,
+  editShop,
   deleteShop,
 };

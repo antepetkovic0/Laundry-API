@@ -3,6 +3,7 @@ const {
   getShops,
   getSpecificShop,
   createShop,
+  editShop,
   deleteShop,
 } = require("../controllers/shop");
 const { authenticateUser } = require("../middlewares/authenticate");
@@ -24,6 +25,8 @@ router.post(
   validateRequest(schema.createShop),
   createShop
 );
+
+router.put("/", authenticateUser, authorizeUser([Role.OWNER]), editShop);
 
 router.delete(
   "/:id",

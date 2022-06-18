@@ -169,15 +169,31 @@ const createShop = async (userId, shopParams) => {
   }
 };
 
-const deleteShop = async (id, userId) => {
+const editShop = async (userId, shopData) => {
   try {
-    const shop = await Shop.findOne({ where: { id } });
+    const shop = await Shop.findOne({ where: { id: shopData.id, userId } });
+
     if (!shop) {
       throw Error("Shop does not exists!");
     }
 
-    if (shop.userId !== userId) {
-      throw Error("You are not authorized to delete shop you did not create!");
+    Object.entries(shopData).forEach((column) => {
+      const [columnName, columnValue] = column;
+      shop[columnName] = columnValue;
+    });
+
+    await shop.save();
+  } catch (err) {
+    throw err.message || "Failed to edit shop!";
+  }
+};
+
+const deleteShop = async (id, userId) => {
+  try {
+    const shop = await Shop.findOne({ where: { id, userId } });
+
+    if (!shop) {
+      throw Error("Shop does not exists!");
     }
 
     await shop.destroy();
@@ -190,5 +206,6 @@ module.exports = {
   getScopedShops,
   getSpecificShop,
   createShop,
+  editShop,
   deleteShop,
 };
