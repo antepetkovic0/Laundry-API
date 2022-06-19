@@ -1,5 +1,20 @@
 const { Product, Shop } = require("../models");
 
+const getProducts = async (shopId, userId) => {
+  try {
+    const shop = await Shop.findOne({ where: { id: shopId, userId } });
+    if (!shop) {
+      throw Error("Shop does not exists!");
+    }
+
+    return Product.findAndCountAll({
+      where: { shopId },
+    });
+  } catch (err) {
+    throw err.message || "Failed to get products!";
+  }
+};
+
 const createProduct = async (params) => {
   try {
     const { shopId, name, slug, price, discount, image, content } = params;
@@ -67,6 +82,7 @@ const deleteProduct = async (id, userId) => {
 };
 
 module.exports = {
+  getProducts,
   createProduct,
   updateProduct,
   deleteProduct,

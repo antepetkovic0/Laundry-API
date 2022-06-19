@@ -1,5 +1,22 @@
 const productService = require("../services/product");
 
+const getProducts = async (req, res, next) => {
+  try {
+    const { shopId } = req.params;
+    const { id: userId } = req.decoded;
+    const { rows, count } = await productService.getProducts(shopId, userId);
+    return res.json({ rows, count });
+  } catch (err) {
+    console.log("errr", err);
+    return next({
+      status: 400,
+      error: {
+        message: err,
+      },
+    });
+  }
+};
+
 const createProduct = async (req, res, next) => {
   try {
     const product = await productService.createProduct(req.body);
@@ -50,6 +67,7 @@ const deleteProduct = async (req, res, next) => {
 };
 
 module.exports = {
+  getProducts,
   createProduct,
   updateProduct,
   deleteProduct,

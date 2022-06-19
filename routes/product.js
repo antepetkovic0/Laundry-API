@@ -3,6 +3,7 @@ const { authenticateUser } = require("../middlewares/authenticate");
 const { authorizeUser } = require("../middlewares/authorize");
 const { validateRequest } = require("../middlewares/validator");
 const {
+  getProducts,
   createProduct,
   deleteProduct,
   updateProduct,
@@ -19,6 +20,8 @@ router.post(
   validateRequest(schema.createProduct),
   createProduct
 );
+
+router.get("/:shopId", authenticateUser, getProducts);
 
 router.put(
   "/:id",
