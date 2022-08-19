@@ -28,6 +28,7 @@ const createProduct = async (params) => {
         content,
       },
     });
+
     if (!created) {
       throw Error("Product already exists!");
     }
@@ -54,6 +55,7 @@ const updateProduct = async (id, userId, updatedBody) => {
     Object.keys(updatedBody).forEach((key) => {
       product[key] = updatedBody[key];
     });
+
     await product.save();
     return product;
   } catch (err) {

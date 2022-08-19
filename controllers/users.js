@@ -2,7 +2,8 @@ const userService = require("../services/users");
 
 const getUsers = async (req, res) => {
   try {
-    const users = await userService.getUsers();
+    const currentUserId = req.decoded.id;
+    const users = await userService.getUsers(currentUserId);
     return res.json(users);
   } catch (err) {
     console.error(err);
@@ -10,76 +11,49 @@ const getUsers = async (req, res) => {
   }
 };
 
-const getPendingUsers = async (req, res) => {
-  try {
-    const users = await userService.getPendingUsers();
-    return res.json(users);
-  } catch (err) {
-    return res.json({ status: 400, message: err.message });
-  }
-};
-
-const approvePendingRequest = async (req, res, next) => {
+const approveUser = async (req, res, next) => {
   try {
     const { hash } = req.body;
-    const user = await userService.approvePendingRequest(hash);
+    const user = await userService.approveUser(hash);
     return res.status(200).json(user);
   } catch (err) {
     return next({
       status: 400,
       error: {
-        message: err,
+        message: err.message,
       },
     });
   }
 };
 
-const declinePendingRequest = async (req, res, next) => {
+const deleteUser = async (req, res, next) => {
   try {
     const { hash } = req.params;
-    await userService.declinePendingRequest(hash);
+    await userService.deleteUser(hash);
     return res.sendStatus(200);
   } catch (err) {
     return next({
       status: 400,
       error: {
-        message: err,
+        message: err.message,
       },
     });
   }
 };
 
-const getUserProfile = async (req, res) => {
-  try {
-    const userEmail = req.decoded.email;
-    const user = await userService.getUserProfile(userEmail);
-    return res.json({ status: 200, data: user });
-  } catch (err) {
-    return res.json({ status: 400, message: err.message });
-  }
-};
-
-const editUserProfile = async (req, res) => {
+// TODO
+const editUser = async (req, res) => {
   try {
     const updatedUser = req.body;
     const userEmail = req.decoded.email;
-    const response = await userService.editUserProfile(userEmail, updatedUser);
+    const response = await userService.editUser(userEmail, updatedUser);
     return res.json({ status: 200, data: response });
   } catch (err) {
     return res.json({ status: 400, message: err.message });
   }
 };
 
-const deleteUserProfile = async (req, res) => {
-  try {
-    const userEmail = req.decoded.email;
-    const response = await userService.deleteUserProfile(userEmail);
-    return res.json({ status: 200, data: response });
-  } catch (err) {
-    return res.json({ status: 400, message: err.message });
-  }
-};
-
+// TODO
 const requestResetPassword = async (req, res) => {
   const passwordReset = await userService.requestPasswordReset(req.body.email);
   return res.json(passwordReset);
@@ -87,11 +61,8 @@ const requestResetPassword = async (req, res) => {
 
 module.exports = {
   getUsers,
-  getPendingUsers,
-  approvePendingRequest,
-  declinePendingRequest,
-  getUserProfile,
-  editUserProfile,
-  deleteUserProfile,
+  approveUser,
+  deleteUser,
+  editUser,
   requestResetPassword,
 };

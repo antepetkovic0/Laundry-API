@@ -2,9 +2,14 @@ const { Op } = require("sequelize");
 const { User } = require("../models");
 const MailService = require("../MailService");
 
-const getUsers = async () => {
+const getUsers = async (currentUserId) => {
   try {
     const users = await User.findAll({
+      where: {
+        id: {
+          [Op.ne]: currentUserId,
+        },
+      },
       order: [["createdAt", "DESC"]],
     });
 
@@ -14,20 +19,39 @@ const getUsers = async () => {
   }
 };
 
-const findAndCountUsers = async () => {
+const countUsers = async () => {
   try {
-    const users = await User.findAndCountAll({
-      limit: 1,
-      order: [["createdAt", "DESC"]],
+    const active = await User.count({
+      where: {
+        status: {
+          [Op.eq]: "ACTIVE",
+        },
+      },
     });
 
-    return users;
+    const pending = await User.count({
+      where: {
+        status: {
+          [Op.eq]: "PENDING",
+        },
+      },
+    });
+
+    const disabled = await User.count({
+      where: {
+        status: {
+          [Op.eq]: "DISABLED",
+        },
+      },
+    });
+
+    return { active, pending, disabled };
   } catch (err) {
-    throw Error("Error while getting users.");
+    throw Error("Error while counting users.");
   }
 };
 
-const approvePendingRequest = async (id) => {
+const approveUser = async (id) => {
   try {
     const user = await User.findOne({
       where: {
@@ -42,9 +66,8 @@ const approvePendingRequest = async (id) => {
     user.status = "ACTIVE";
     await user.save();
 
-    const name = `${user.firstName} ${user.lastName}`;
     const payload = {
-      name,
+      name: `${user.firstName} ${user.lastName}`,
       url: `http://localhost:3000/auth`,
     };
 
@@ -55,34 +78,26 @@ const approvePendingRequest = async (id) => {
       context: payload,
       attachments: [],
     };
+
     const mailService = new MailService();
-    await mailService.sendMail(mailInfo);
+    mailService.sendMail(mailInfo);
+
     return user;
   } catch (err) {
-    console.log("Error", err);
+    throw Error(err.message || "Failed to activate user account!");
   }
 };
 
-const declinePendingRequest = async (id) => {
+const deleteUser = async (id) => {
   try {
     await User.destroy({ where: { id } });
   } catch (err) {
-    throw Error("Failed to delete pending request!");
+    throw Error("Failed to delete user!");
   }
 };
 
-const getUserProfile = async (email) => {
-  try {
-    const user = await User.findOne({ where: { email } });
-    console.log("user profile", user);
-    // sequelize returning user class -> dataValues but to variable is assigned json with user params
-    return user;
-  } catch (err) {
-    throw Error("Error while getting user profile.");
-  }
-};
-
-const editUserProfile = async (email, updatedUser) => {
+// TODO
+const editUser = async (email, updatedUser) => {
   try {
     const user = await User.findOne({ where: { email } });
     // sequelize returning user class -> dataValues but to variable is assigned json with user params
@@ -97,16 +112,7 @@ const editUserProfile = async (email, updatedUser) => {
   }
 };
 
-const deleteUserProfile = async (email) => {
-  try {
-    const user = await User.findOne({ where: { email } });
-    await user.destroy();
-    return "User account has been successfully deleted";
-  } catch (err) {
-    throw Error("Error while deleting user account.");
-  }
-};
-
+// TODO
 const requestPasswordReset = async (email) => {
   const user = await User.findOne({ where: { email } });
   console.log(user);
@@ -125,17 +131,15 @@ const requestPasswordReset = async (email) => {
   };
 
   const mailService = new MailService();
-  await mailService.sendMail(mailInfo);
+  mailService.sendMail(mailInfo);
   return "email sent";
 };
 
 module.exports = {
   getUsers,
-  findAndCountUsers,
-  approvePendingRequest,
-  declinePendingRequest,
-  getUserProfile,
-  editUserProfile,
-  deleteUserProfile,
+  countUsers,
+  approveUser,
+  deleteUser,
+  editUser,
   requestPasswordReset,
 };

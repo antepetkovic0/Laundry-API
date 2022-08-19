@@ -2,8 +2,8 @@
 const roles = require("../utils/roles");
 const { Shop, User, Product } = require("../models");
 
-const findAllOwnerShops = async (userId) => {
-  const shops = await Shop.findAll({
+const findOwnerShops = async (userId) =>
+  Shop.findAll({
     where: { userId },
     include: [
       {
@@ -19,11 +19,8 @@ const findAllOwnerShops = async (userId) => {
     order: [["createdAt", "DESC"]],
   });
 
-  return shops;
-};
-
-const findAllShops = async () => {
-  const shops = await Shop.findAll({
+const findAllShops = async () =>
+  Shop.findAll({
     include: [
       {
         model: User,
@@ -38,68 +35,40 @@ const findAllShops = async () => {
     order: [["createdAt", "DESC"]],
   });
 
-  return shops;
-};
-
-const findAndCountOwnerShops = async (userId) => {
-  const shops = await Shop.findAndCountAll({
+const countOwnerShops = async (userId) =>
+  Shop.count({
     where: { userId },
-    include: [
-      {
-        model: User,
-        as: "user",
-        attributes: ["firstName", "lastName"],
-      },
-    ],
-    limit: 1,
-    order: [["createdAt", "DESC"]],
   });
 
-  return shops;
-};
+const countAllShops = async () => Shop.count();
 
-const findAndCountShops = async () => {
-  const shops = await Shop.findAndCountAll({
-    include: [
-      {
-        model: User,
-        as: "user",
-        attributes: ["firstName", "lastName"],
-      },
-    ],
-    limit: 1,
-    order: [["createdAt", "DESC"]],
-  });
-
-  return shops;
-};
-
-const getScopedShops = async (roleId, userId, forDashboardOverview = false) => {
+const getScopedShops = async (roleId, userId) => {
   try {
-    if (roleId === roles.OWNER && !forDashboardOverview) {
-      const shops = await findAllOwnerShops(userId);
-
+    if (roleId === roles.OWNER) {
+      const shops = await findOwnerShops(userId);
       return shops;
     }
 
-    if (roleId === roles.OWNER && forDashboardOverview) {
-      const shops = await findAndCountOwnerShops(userId);
-
-      return shops;
-    }
-
-    if (roleId !== roles.OWNER && !forDashboardOverview) {
-      const shops = await findAllShops();
-
-      return shops;
-    }
-
-    const shops = await findAndCountShops();
-
+    const shops = await findAllShops();
     return shops;
   } catch (err) {
-    console.log(err);
-    throw Error("blabal");
+    console.error(err);
+    throw Error("Failed to fetch shops!");
+  }
+};
+
+const countScopedShops = async (roleId, userId) => {
+  try {
+    if (roleId === roles.OWNER) {
+      const total = await countOwnerShops(userId);
+      return total;
+    }
+
+    const total = await countAllShops();
+    return total;
+  } catch (err) {
+    console.error(err);
+    throw Error("Failed to count shops!");
   }
 };
 
@@ -129,7 +98,7 @@ const getSpecificShop = async (roleId, userId, slug) => {
     return shop;
   } catch (err) {
     console.log(err);
-    throw Error("blblbl");
+    throw Error("Failed to fetch shop!");
   }
 };
 
@@ -204,6 +173,7 @@ const deleteShop = async (id, userId) => {
 
 module.exports = {
   getScopedShops,
+  countScopedShops,
   getSpecificShop,
   createShop,
   editShop,

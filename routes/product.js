@@ -27,7 +27,6 @@ router.put(
   "/:id",
   authenticateUser,
   authorizeUser([Role.OWNER]),
-  validateRequest(schema.createProduct),
   updateProduct
 );
 

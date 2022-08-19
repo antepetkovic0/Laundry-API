@@ -43,7 +43,7 @@ module.exports = {
     shopId: joi.string().required(),
     name: joi.string().required(),
     slug: joi.string().required().min(5).max(15),
-    price: joi.number().required(),
+    price: joi.string().required(),
     discount: joi.number().min(1).max(99),
     image: joi.string().required(),
     content: joi.string(),

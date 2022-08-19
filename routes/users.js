@@ -2,29 +2,29 @@ const express = require("express");
 const { authenticateUser } = require("../middlewares/authenticate");
 const { authorizeUser } = require("../middlewares/authorize");
 const userController = require("../controllers/users");
-const Role = require("../utils/roles");
+const ROLE = require("../utils/roles");
 
 const router = express.Router();
 
 router.get(
   "/",
   authenticateUser,
-  authorizeUser([Role.ADMIN]),
+  authorizeUser([ROLE.ADMIN]),
   userController.getUsers
+);
+
+router.delete(
+  "/:hash",
+  authenticateUser,
+  authorizeUser([ROLE.ADMIN]),
+  userController.deleteUser
 );
 
 router.post(
   "/pending",
   authenticateUser,
-  authorizeUser([Role.ADMIN]),
-  userController.approvePendingRequest
-);
-
-router.delete(
-  "/pending/:hash",
-  authenticateUser,
-  authorizeUser([Role.ADMIN]),
-  userController.declinePendingRequest
+  authorizeUser([ROLE.ADMIN]),
+  userController.approveUser
 );
 
 module.exports = router;
