@@ -44,9 +44,21 @@ const createRefreshTokenPayload = (userId) => {
 const verifyRefreshTokenExpiration = (token) =>
   token.expiryDate.getTime() < new Date().getTime();
 
+const createResetPasswordTokenPayload = (userId) => {
+  const expiredAt = new Date();
+  expiredAt.setSeconds(expiredAt.getSeconds() + 300);
+
+  return {
+    token: uuidv4(),
+    expiryDate: expiredAt.getTime(),
+    userId,
+  };
+};
+
 module.exports = {
   createAccessToken,
   verifyAccessToken,
   createRefreshTokenPayload,
+  createResetPasswordTokenPayload,
   verifyRefreshTokenExpiration,
 };

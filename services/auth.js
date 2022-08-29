@@ -1,9 +1,17 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
-const { User, Permission, Role, RefreshToken } = require("../models");
+const MailService = require("../MailService");
+const {
+  User,
+  Permission,
+  Role,
+  RefreshToken,
+  ResetPasswordToken,
+} = require("../models");
 const { checkPassword, hashPassword } = require("../utils/hash");
 const {
   createAccessToken,
   createRefreshTokenPayload,
+  createResetPasswordTokenPayload,
   verifyRefreshTokenExpiration,
 } = require("../utils/token");
 
@@ -129,8 +137,79 @@ const refreshTokens = async (token) => {
   }
 };
 
+const requestResetPassword = async (email) => {
+  try {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("User does not exists!");
+
+    const token = await ResetPasswordToken.findOne({ userId: user.id });
+    if (token) await token.destroy();
+
+    const newToken = createResetPasswordTokenPayload(user.id);
+    await ResetPasswordToken.create(newToken);
+
+    const mailService = new MailService();
+    const mailPayload = {
+      to: user.email,
+      subject: "CleanZee - Password Reset",
+      template: "requestResetPassword",
+      context: {
+        name: `${user.firstName} ${user.lastName}`,
+        url: `http://192.168.1.11:3000/auth/password-reset?token=${newToken.token}&userId=${user.id}`,
+      },
+      attachments: [],
+    };
+    mailService.sendMail(mailPayload);
+
+    return "Email has been sent.";
+  } catch (err) {
+    throw err.message || "Failed to reset password!";
+  }
+};
+
+const resetPassword = async (password, token, userId) => {
+  try {
+    const resetPasswordToken = await ResetPasswordToken.findOne({ userId });
+    if (!resetPasswordToken) throw new Error("No token!");
+
+    // TODO maybe hash tokens
+    if (
+      token !== resetPasswordToken.token ||
+      verifyRefreshTokenExpiration(resetPasswordToken)
+    ) {
+      await resetPasswordToken.destroy();
+      throw new Error("Invalid or expired reset password token");
+    }
+
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) throw new Error("No user!");
+
+    const hashedPassword = await hashPassword(password);
+    user.password = hashedPassword;
+    await user.save();
+
+    const mailService = new MailService();
+    const mailPayload = {
+      to: user.email,
+      subject: "CleanZee - Password Reset Successfully",
+      template: "requestResetPassword",
+      context: {
+        name: `${user.firstName} ${user.lastName}`,
+      },
+      attachments: [],
+    };
+    mailService.sendMail(mailPayload);
+
+    return true;
+  } catch (err) {
+    throw err.message || "Failed to reset password!";
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   refreshTokens,
+  requestResetPassword,
+  resetPassword,
 };

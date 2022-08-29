@@ -2,7 +2,7 @@ const { Product, Shop } = require("../models");
 
 const getProducts = async (shopId, userId) => {
   try {
-    const shop = await Shop.findOne({ where: { id: shopId, userId } });
+    const shop = await Shop.findOne({ where: { id: shopId } });
     if (!shop) {
       throw Error("Shop does not exists!");
     }

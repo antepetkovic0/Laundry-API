@@ -15,4 +15,8 @@ router.post("/login", validateRequest(schema.login), authController.loginUser);
 
 router.post("/refresh", authController.refreshTokens);
 
+router.post("/request-reset-password", authController.requestResetPassword);
+
+router.post("/reset-password", authController.resetPassword);
+
 module.exports = router;

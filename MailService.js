@@ -25,8 +25,8 @@ class MailService {
       host: "smtp.mailtrap.io",
       port: 2525,
       auth: {
-        user: "e35e14755cd9c1",
-        pass: "bbecd66ee23c2a",
+        user: "ad0738703f962c",
+        pass: "e85025e2877274",
       },
     });
 

@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 // app.use(helmet());
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: "http://192.168.1.11:3000", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 // app.use(express.urlencoded({ extended: false }));
@@ -36,7 +36,7 @@ models.sequelize
   .sync()
   .then(() => {
     console.log("Database connection successful.");
-    app.listen(PORT, () => {
+    app.listen(PORT, "192.168.1.11", () => {
       console.log(`Server listening on port ${PORT}`);
     });
   })
