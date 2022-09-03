@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         allowNull: false,
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDv4,
+        defaultValue: DataTypes.UUIDV4,
       },
       shopId: {
         allowNull: false,
@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     Order.belongsTo(models.Shop, {
       foreignKey: {
         name: "shopId",
+        as: "shop",
       },
     });
     Order.belongsTo(models.User, {

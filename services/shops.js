@@ -172,6 +172,7 @@ const deleteShop = async (id, userId) => {
 };
 
 module.exports = {
+  findOwnerShops,
   getScopedShops,
   countScopedShops,
   getSpecificShop,
