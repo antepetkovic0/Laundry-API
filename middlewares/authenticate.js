@@ -4,8 +4,6 @@ const authenticateUser = async (req, res, next) => {
   const header = req.headers.authorization ?? "";
   const token = header.split(" ")[1];
 
-  console.log("header", req.headers);
-
   if (token) {
     try {
       const decoded = await verifyAccessToken(token);

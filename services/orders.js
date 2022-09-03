@@ -4,7 +4,18 @@ const { Shop, Order, Order_Item, Product, sequelize } = require("../models");
 const { findOwnerShops } = require("./shops");
 
 const findAllOrders = async () =>
-  Shop.findAll({
+  Order.findAll({
+    include: [
+      {
+        model: Shop,
+        as: "Shop",
+        attributes: ["name", "image"],
+      },
+      {
+        model: Product,
+        as: "products",
+      },
+    ],
     order: [["createdAt", "DESC"]],
   });
 
@@ -38,7 +49,6 @@ const getScopedOrders = async (roleId, userId) => {
 
     const ownerShops = await findOwnerShops(userId);
     const ownerShopsIds = ownerShops.map((shop) => shop.id);
-
     return orders.filter((order) => ownerShopsIds.includes(order.shopId));
   } catch (err) {
     console.error(err);
