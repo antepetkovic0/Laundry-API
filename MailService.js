@@ -14,14 +14,7 @@ class MailService {
       viewPath: "views",
     };
 
-    // shoud be like private (this.__transporter) => things in JS are not private
-    // search this
     this.transporter = nodemailer.createTransport({
-      // service: "Gmail",
-      // auth: {
-      //   user: process.env.EMAIL || "ante.petkovic1994@gmail.com",
-      //   pass: process.env.EMAIL_PASSWORD || "utqhbxkpsfjzdzng",
-      // },
       host: "smtp.mailtrap.io",
       port: 2525,
       auth: {
@@ -37,7 +30,7 @@ class MailService {
     return this.transporter.sendMail(
       {
         to: `<${to}>`,
-        from: process.env.FROM_EMAIL || "ante.petkovic1994@gmail.com",
+        from: "cleanzee@gmail.com",
         subject,
         template,
         context,
@@ -52,10 +45,10 @@ class MailService {
       },
       (error, info) => {
         if (error) {
-          console.log(error);
-          throw Error("Error in sending email.");
+          console.error(error);
+          throw Error("There was problem upon seding email.");
         }
-        console.log(info);
+
         return info;
       }
     );

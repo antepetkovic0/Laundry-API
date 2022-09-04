@@ -36,6 +36,22 @@ const registerUser = async (params) => {
       throw Error("User with given email already exists!");
     }
 
+    if (user.status === "ACTIVE") {
+      const mailPayload = {
+        to: user.email,
+        subject: "CleanZee - Account activated",
+        template: "serviceApprove",
+        context: {
+          name: `${user.firstName} ${user.lastName}`,
+          url: `http://192.168.1.11:3000/auth`,
+        },
+        attachments: [],
+      };
+
+      const mailService = new MailService();
+      mailService.sendMail(mailPayload);
+    }
+
     return `Thank you for registering into our application! ${
       user.status === "PENDING"
         ? "Our team has been notified and you will receive activation email as soon as possible."
@@ -73,7 +89,7 @@ const loginUser = async (params) => {
     });
 
     if (!user || !(await checkPassword(paramPassword, user.password))) {
-      throw Error("Email or password is incorrect!");
+      throw Error("Invalid email or password! Please try again!");
     }
 
     if (user.status === "PENDING") {
@@ -88,7 +104,7 @@ const loginUser = async (params) => {
     });
 
     if (refreshToken) {
-      await RefreshToken.destroy({ where: { id: refreshToken.id } });
+      await refreshToken.destroy();
     }
     const newRefreshToken = await RefreshToken.create(
       createRefreshTokenPayload(user.id)
@@ -139,10 +155,12 @@ const refreshTokens = async (token) => {
 
 const requestResetPassword = async (email) => {
   try {
-    const user = await User.findOne({ email });
-    if (!user) throw new Error("User does not exists!");
+    const user = await User.findOne({ where: { email } });
+    if (!user) throw new Error("User does not exist!");
 
-    const token = await ResetPasswordToken.findOne({ userId: user.id });
+    const token = await ResetPasswordToken.findOne({
+      where: { userId: user.id },
+    });
     if (token) await token.destroy();
 
     const newToken = createResetPasswordTokenPayload(user.id);
@@ -161,7 +179,7 @@ const requestResetPassword = async (email) => {
     };
     mailService.sendMail(mailPayload);
 
-    return "Email has been sent.";
+    return "An email has been sent successfully. Verification link will be valid for 5 minutes!";
   } catch (err) {
     throw err.message || "Failed to reset password!";
   }
@@ -169,7 +187,10 @@ const requestResetPassword = async (email) => {
 
 const resetPassword = async (password, token, userId) => {
   try {
-    const resetPasswordToken = await ResetPasswordToken.findOne({ userId });
+    const resetPasswordToken = await ResetPasswordToken.findOne({
+      where: { userId },
+    });
+
     if (!resetPasswordToken) throw new Error("No token!");
 
     // TODO maybe hash tokens
@@ -192,7 +213,7 @@ const resetPassword = async (password, token, userId) => {
     const mailPayload = {
       to: user.email,
       subject: "CleanZee - Password Reset Successfully",
-      template: "requestResetPassword",
+      template: "resetPassword",
       context: {
         name: `${user.firstName} ${user.lastName}`,
       },

@@ -6,7 +6,6 @@ const loginUser = async (req, res, next) => {
       req.body
     );
 
-    // set path for refresh token cookie
     res.cookie("refresh-token", refreshToken, {
       httpOnly: false,
       secure: false,
@@ -14,11 +13,10 @@ const loginUser = async (req, res, next) => {
 
     return res.status(200).json({ user, accessToken });
   } catch (err) {
+    console.log("here error", err);
     return next({
       status: 400,
-      error: {
-        message: err,
-      },
+      message: err,
     });
   }
 };
@@ -30,9 +28,7 @@ const registerUser = async (req, res, next) => {
   } catch (err) {
     return next({
       status: 400,
-      error: {
-        message: err,
-      },
+      message: err,
     });
   }
 };
@@ -53,9 +49,7 @@ const refreshTokens = async (req, res, next) => {
   } catch (err) {
     return next({
       status: 400,
-      error: {
-        message: err,
-      },
+      message: err,
     });
   }
 };
@@ -68,9 +62,7 @@ const requestResetPassword = async (req, res, next) => {
   } catch (err) {
     return next({
       status: 400,
-      error: {
-        message: err,
-      },
+      message: err,
     });
   }
 };
@@ -83,9 +75,7 @@ const resetPassword = async (req, res, next) => {
   } catch (err) {
     return next({
       status: 400,
-      error: {
-        message: err,
-      },
+      message: err,
     });
   }
 };

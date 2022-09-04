@@ -66,21 +66,19 @@ const approveUser = async (id) => {
     user.status = "ACTIVE";
     await user.save();
 
-    const payload = {
-      name: `${user.firstName} ${user.lastName}`,
-      url: `http://localhost:3000/auth`,
-    };
-
-    const mailInfo = {
+    const mailPayload = {
       to: user.email,
       subject: "CleanZee - Account activated",
       template: "serviceApprove",
-      context: payload,
+      context: {
+        name: `${user.firstName} ${user.lastName}`,
+        url: `http://192.168.1.11:3000/auth`,
+      },
       attachments: [],
     };
 
     const mailService = new MailService();
-    mailService.sendMail(mailInfo);
+    mailService.sendMail(mailPayload);
 
     return user;
   } catch (err) {
