@@ -1,5 +1,5 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
-const MailService = require("../MailService");
+const MailService = require("./MailService");
 const {
   User,
   Permission,

@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes");
-const models = require("./models");
+const db = require("./models");
 
 const PORT = process.env.PORT || 8000;
 
@@ -25,14 +25,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-models.sequelize
-  .sync()
+db.sequelize
+  .authenticate()
   .then(() => {
-    console.log("DB connection successful.");
+    console.log("Connection to database has been established successfully.");
     app.listen(PORT, "192.168.1.11", () => {
       console.log(`Server listening on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.log("Failed to connect to DB:", err);
+    console.log("Failed to connect to database:", err);
   });

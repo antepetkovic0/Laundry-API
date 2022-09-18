@@ -7,7 +7,7 @@ const {
   createProduct,
   deleteProduct,
   updateProduct,
-} = require("../controllers/product");
+} = require("../controllers/products");
 const schema = require("../utils/schemas");
 const Role = require("../utils/roles");
 

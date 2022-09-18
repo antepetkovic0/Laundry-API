@@ -13,6 +13,7 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).send("Failed to authenticate token!");
     }
   }
+
   return res.status(401).send("No provided token!");
 };
 

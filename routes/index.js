@@ -4,7 +4,7 @@ const authRoutes = require("./auth");
 const dashboardRoutes = require("./dashboard");
 const userRoutes = require("./users");
 const shopRoutes = require("./shops");
-const productRoutes = require("./product");
+const productRoutes = require("./products");
 const orderRoutes = require("./orders");
 
 const router = express.Router();

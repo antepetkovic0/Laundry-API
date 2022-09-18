@@ -6,8 +6,8 @@ class MailService {
   constructor() {
     const options = {
       viewEngine: {
-        partialsDir: path.join(__dirname, "/views/partials"),
-        layoutsDir: path.join(__dirname, "/views/layouts"),
+        partialsDir: path.join(__dirname, "/../views/partials"),
+        layoutsDir: path.join(__dirname, "/../views/layouts"),
         extname: ".hbs",
       },
       extName: ".hbs",
@@ -36,8 +36,8 @@ class MailService {
         context,
         attachments: [
           {
-            filename: "laundry-logo.png",
-            path: path.join(__dirname, "laundry-logo.png"),
+            filename: "logo.png",
+            path: path.join(__dirname, "/../logo.png"),
             cid: "logo@cid",
           },
           ...attachments,

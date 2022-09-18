@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const { User } = require("../models");
-const MailService = require("../MailService");
+const MailService = require("./MailService");
 
 const getUsers = async (currentUserId) => {
   try {
