@@ -12,13 +12,11 @@ const getShops = async (req, res) => {
 
 const getSpecificShop = async (req, res, next) => {
   try {
-    const { roleId, id } = req.decoded;
+    const { roleId, id: userId } = req.decoded;
     const { slug } = req.params;
-    console.log("req params", req.params);
-    const shop = await shopService.getSpecificShop(roleId, id, slug);
+    const shop = await shopService.getSpecificShop(roleId, userId, slug);
     return res.json(shop);
   } catch (err) {
-    console.log("errr", err);
     return next({
       status: 400,
       error: {

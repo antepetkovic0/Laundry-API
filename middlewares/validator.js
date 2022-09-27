@@ -7,9 +7,7 @@ const validateRequest = (schema) => (req, res, next) => {
 
   if (error) {
     res.status(422).send({
-      error: {
-        message: "Invalid input. Please try again!",
-      },
+      message: "Invalid input. Please try again!",
     });
   } else {
     req.body = value;

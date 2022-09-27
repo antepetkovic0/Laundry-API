@@ -30,7 +30,7 @@ const verifyAccessToken = (token) =>
 
 const createRefreshTokenPayload = (userId) => {
   const expiredAt = new Date();
-  expiredAt.setSeconds(expiredAt.getSeconds() + 1200);
+  expiredAt.setSeconds(expiredAt.getSeconds() + 86400);
 
   const refreshTokenUUID = uuidv4();
 

@@ -14,7 +14,7 @@ const checkPassword = async (password, hash) => {
     const isMatching = await bcrypt.compare(password, hash);
     return isMatching;
   } catch (err) {
-    throw Error("Error in checking password.", err);
+    throw Error("Failed to check password.", err);
   }
 };
 

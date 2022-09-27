@@ -89,16 +89,15 @@ const getSpecificShop = async (roleId, userId, slug) => {
       ],
     });
 
-    // if request was made by owner and he didnt create that shop return null
-    // TODO: slug must be unique
     if (shop && shop.userId !== userId && roleId === roles.OWNER) {
-      return null;
+      throw Error(
+        "As a shop owner, you can not fetch shop you did not create!"
+      );
     }
 
     return shop;
   } catch (err) {
-    console.log(err);
-    throw Error("Failed to fetch shop!");
+    throw err.message || "Failed to fetch shop!";
   }
 };
 
